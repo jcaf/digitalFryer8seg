@@ -8,18 +8,16 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-struct _main_flag
+struct _mainflag
 {
-    unsigned systick :1;
-    unsigned sw1_toggle:1;
-    unsigned __a:6;
-
+		unsigned sysTickMs :1;
+		unsigned __a:7;
 };
-extern struct _main_flag main_flag;
+extern struct _mainflag mainflag;
 
 
 
-#define SYSTICK 1E-3	//1ms
+#define SYSTICK_MS 1	//1ms
 //#define SYSTICK_MS 1	//1ms
 
 
