@@ -96,17 +96,16 @@ struct _disp7s_mux disp7s_mux[DISP7S_TOTAL_NUMMAX] =
 char disp7s_data[DISP7S_TOTAL_NUMMAX] =
 {
 	D7S_DATA_0,
-	//D7S_DATA_1inv,
-	D7S_DATA_9inv,
+	D7S_DATA_6inv,
 
-	D7S_DATA_2,
+	D7S_DATA_0,
+	D7S_DATA_0,
+	//
 	D7S_DATA_3,
-	D7S_DATA_4,
+	D7S_DATA_3inv,
 
-	D7S_DATA_0inv,
-
-	D7S_DATA_6,
-	D7S_DATA_7,
+	D7S_DATA_0,
+	D7S_DATA_0,
 };
 
 void disp7s_on2DecPoint_basket0(void)
@@ -158,5 +157,4 @@ void disp7s_init(void)
     //
     disp7s_on2DecPoint_basket0();
     disp7s_on2DecPoint_basket1();
-    disp7s_off2DecPoint_basket0();
 }
