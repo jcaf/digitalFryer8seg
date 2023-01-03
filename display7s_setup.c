@@ -92,20 +92,29 @@ struct _disp7s_mux disp7s_mux[DISP7S_TOTAL_NUMMAX] =
 	{{disp7s_mux7_off, disp7s_mux7_on}}
 };
 
-
-char disp7s_data[DISP7S_TOTAL_NUMMAX] =
-{
-	D7S_DATA_0,
-	D7S_DATA_6inv,
+/*
+ * D7S_DATA_0,
+	DISP7Sinvfix(D7S_DATA_6),
 
 	D7S_DATA_0,
 	D7S_DATA_0,
 	//
 	D7S_DATA_3,
-	D7S_DATA_3inv,
+	DISP7Sinvfix(D7S_DATA_3),
+ *
+ */
+char disp7s_data[DISP7S_TOTAL_NUMMAX] =
+{
+	D7S_DATA_h,
+	DISP7Sinvfix(D7S_DATA_t),
 
-	D7S_DATA_0,
-	D7S_DATA_0,
+	D7S_DATA_OFF,
+	D7S_DATA_r,
+	//
+	D7S_DATA_o,
+	DISP7Sinvfix(D7S_DATA_r),
+	D7S_DATA_r,
+	D7S_DATA_E,
 };
 
 void disp7s_on2DecPoint_basket0(void)
@@ -134,9 +143,15 @@ void disp7s_init(void)
 {
 	int8_t i;
 
-	ConfigOutputPort(PORTWxDISPLAY7S_DATA,OUTPUT_PORT8BIT);
+	ConfigOutputPort(CONFIGIOxDISPLAY7S_DATA,OUTPUT_PORT8BIT);
+
+	//disp7s_on2DecPoint_basket0();
+	//disp7s_on2DecPoint_basket1();
+	disp7s_off2DecPoint_basket0();
+	disp7s_off2DecPoint_basket1();
 
 	disp7s_setup(DISP7S_TOTAL_NUMMAX, &PORTWxDISPLAY7S_DATA,  disp7s_data, disp7s_mux);
+    //
 
 	//config transistors
 	for (i=0; i< DISP7S_TOTAL_NUMMAX; i++)
@@ -144,17 +159,15 @@ void disp7s_init(void)
         disp7s_mux[i].Qonoff[0]();//off
     }
 
-    ConfigOutputPin(PORTWxDISPLAY7S_Q0, PINxDISPLAY7S_Q0);
-    ConfigOutputPin(PORTWxDISPLAY7S_Q1, PINxDISPLAY7S_Q1);
-    ConfigOutputPin(PORTWxDISPLAY7S_Q2, PINxDISPLAY7S_Q2);
-    ConfigOutputPin(PORTWxDISPLAY7S_Q3, PINxDISPLAY7S_Q3);
-    ConfigOutputPin(PORTWxDISPLAY7S_Q4, PINxDISPLAY7S_Q4);
-    ConfigOutputPin(PORTWxDISPLAY7S_Q5, PINxDISPLAY7S_Q5);
-    ConfigOutputPin(PORTWxDISPLAY7S_Q6, PINxDISPLAY7S_Q6);
-    ConfigOutputPin(PORTWxDISPLAY7S_Q7, PINxDISPLAY7S_Q7);
+    ConfigOutputPin(CONFIGIOxDISPLAY7S_Q0, PINxDISPLAY7S_Q0);
+    ConfigOutputPin(CONFIGIOxDISPLAY7S_Q1, PINxDISPLAY7S_Q1);
+    ConfigOutputPin(CONFIGIOxDISPLAY7S_Q2, PINxDISPLAY7S_Q2);
+    ConfigOutputPin(CONFIGIOxDISPLAY7S_Q3, PINxDISPLAY7S_Q3);
+    ConfigOutputPin(CONFIGIOxDISPLAY7S_Q4, PINxDISPLAY7S_Q4);
+    ConfigOutputPin(CONFIGIOxDISPLAY7S_Q5, PINxDISPLAY7S_Q5);
+    ConfigOutputPin(CONFIGIOxDISPLAY7S_Q6, PINxDISPLAY7S_Q6);
+    ConfigOutputPin(CONFIGIOxDISPLAY7S_Q7, PINxDISPLAY7S_Q7);
 
 
-    //
-    disp7s_on2DecPoint_basket0();
-    disp7s_on2DecPoint_basket1();
+
 }

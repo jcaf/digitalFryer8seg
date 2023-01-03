@@ -147,39 +147,51 @@
 // DISPLAY NORMAL POSITION
 // Define position hardware pin
 
+#define DISP7Sinvfix(data) (((data & 0x10)>>2) | ((data & 0x04)<<2) | (data & 0xEB))
+
 #define D7S_Ginv D7S_DP
 #define D7S_DPinv D7S_G
+////0x3F,//    0b0011 1111,//0
+//#define D7S_DATA_0inv ((0<<D7S_DPinv)|(0<<D7S_Ginv)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
+////0x06,//    0b0000 0110,//1
+//#define D7S_DATA_1inv ((0<<D7S_DPinv)|(0<<D7S_Ginv)|(0<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(0<<D7S_A))
+////0x5B,//    0b0101 1011,//2
+//#define D7S_DATA_2inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(0<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(0<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
+////0x4F,//    0b0100 1111,//3
+//#define D7S_DATA_3inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(0<<D7S_F)|(0<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
+////0x66,//    0b0110 0110,//4
+//#define D7S_DATA_4inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(0<<D7S_A))
+////0x6D,//    0b0110 1101,//5
+//#define D7S_DATA_5inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(0<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(1<<D7S_A))
+////0x7C,//    0b0111 1100,//6
+//#define D7S_DATA_6inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
+////0x07,//    0b0000 0111,//7
+//#define D7S_DATA_7inv ((0<<D7S_DPinv)|(0<<D7S_Ginv)|(0<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
+////0x7F,//    0b0111 1111,//8
+//#define D7S_DATA_8inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
+////0x67,//    0b01100111,//9
+//#define D7S_DATA_9inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
 
-//0x3F,//    0b0011 1111,//0
-#define D7S_DATA_0inv ((0<<D7S_DPinv)|(0<<D7S_Ginv)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
 
-//0x06,//    0b0000 0110,//1
-#define D7S_DATA_1inv ((0<<D7S_DPinv)|(0<<D7S_Ginv)|(0<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(0<<D7S_A))
 
-//0x5B,//    0b0101 1011,//2
-#define D7S_DATA_2inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(0<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(0<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
+//-----------------------------------------------------
+//-----------------------------------------------------
+//E
+#define D7S_DATA_E ((0<<D7S_DP)|(1<<D7S_G)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(1<<D7S_A))
+//r
+#define D7S_DATA_r ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(0<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
+//o
+#define D7S_DATA_o ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
 
-//0x4F,//    0b0100 1111,//3
-#define D7S_DATA_3inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(0<<D7S_F)|(0<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
+#define D7S_DATA_OFF 0
+//t
+#define D7S_DATA_t ((0<<D7S_DP)|(1<<D7S_G)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
+//h
+#define D7S_DATA_h ((0<<D7S_DP)|(1<<D7S_G)|(1<<D7S_F)|(1<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
 
-//0x66,//    0b0110 0110,//4
-#define D7S_DATA_4inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(0<<D7S_A))
 
-//0x6D,//    0b0110 1101,//5
-#define D7S_DATA_5inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(0<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(1<<D7S_A))
-
-//0x7C,//    0b0111 1100,//6
-#define D7S_DATA_6inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
-
-//0x07,//    0b0000 0111,//7
-#define D7S_DATA_7inv ((0<<D7S_DPinv)|(0<<D7S_Ginv)|(0<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
-
-//0x7F,//    0b0111 1111,//8
-#define D7S_DATA_8inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
-
-//0x67,//    0b01100111,//9
-#define D7S_DATA_9inv ((0<<D7S_DPinv)|(1<<D7S_Ginv)|(1<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
-
+//-----------------------------------------------------
+//-----------------------------------------------------
 void disp7s_init(void);
 
 #endif /* DISPLAY7S_SETUP_H_ */

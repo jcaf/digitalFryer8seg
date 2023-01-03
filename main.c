@@ -200,15 +200,9 @@ int main(void)
 	int c = 0;
 	char str[10];
 
-	PORTC = 0x0;
-
-		PORTA = PORTD = 0x0;
-		DDRC = DDRD = DDRA = 0xFF;
-
- /* falta inicializar los puertos*/
 
 	disp7s_init();//new
-/*
+
 	eeprom_read_block((struct _Tcoccion *)&tmprture_coccion , (struct _Tcoccion *)&TMPRTURE_COCCION, sizeof(struct _Tcoccion) );
 
 	fryer_init();
@@ -224,35 +218,24 @@ int main(void)
 	PinTo1(PORTWxKB_KEY4, PINxKB_KEY4);
 	PinTo1(PORTWxKB_KEY5, PINxKB_KEY5);
 	PinTo1(PORTWxKB_KEY6, PINxKB_KEY6);
-
 	__delay_ms(1);
 	ikb_init();
 
 	pinGetLevel_init(); //with Changed=flag activated at initialization
 
-	//
-//	PinTo0(PORTWxCHISPERO_ONOFF, PINxCHISPERO_ONOFF);
-//	ConfigOutputPin(CONFIGIOxCHISPERO_ONOFF, PINxCHISPERO_ONOFF);
 
 	PinTo0(PORTWxSOL_GAS_QUEMADOR, PINxKB_SOL_GAS_QUEMADOR);
 	ConfigOutputPin(CONFIGIOxSOL_GAS_QUEMADOR, PINxKB_SOL_GAS_QUEMADOR);
-
-//	PinTo0(PORTWxSOL_GAS_PILOTO, PINxKB_SOL_GAS_PILOTO);
-//	ConfigOutputPin(CONFIGIOxSOL_GAS_PILOTO, PINxKB_SOL_GAS_PILOTO);
 
 	//
 	ConfigOutputPin(CONFIGIOxBUZZER, PINxBUZZER);
 	indicator_setPortPin(&PORTWxBUZZER, PINxBUZZER);
 	indicator_setKSysTickTime_ms(75/SYSTICK_MS);
 
-
-	//PinTo1(PORTWxFLAME_DETECC, PINxFLAME_DETECC);//Active pull-up
-	//ConfigInputPin(PORTRxFLAME_DETECC, PINxFLAME_DETECC);
-
 	//lcdan_init();
 
 	InitSPI_MASTER();
-*/
+
 
 	//With prescaler 64, gets 1 ms exact (OCR0=249)
 	TCNT0 = 0x00;
@@ -260,15 +243,10 @@ int main(void)
 	OCR0 = CTC_SET_OCR_BYTIME(1e-3, 64); //TMR8-BIT @16MHz @PRES=1024-> BYTIME maximum = 16ms
 	TIMSK |= (1 << OCIE0);
 
-
 	sei();
 
-	mypid0_set();	/* Once*/
+	mypid0_set();	//1 vez
 
-	//kbmode_2basket_set_default();
-//++++++++++++++++++++++++
-
-	//ind();
 
 int8_t systick_counter0=0;
 while (1)
