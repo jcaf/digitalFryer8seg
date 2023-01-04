@@ -1,6 +1,6 @@
 /*
  * display7s.c
- *
+ * Driver
  *  Created on: Dec 29, 2022
  *      Author: jcaf
 
@@ -17,11 +17,11 @@ static volatile uint8_t * PORTWxDISPLAY7S_DATA;
 static volatile char * disp7s_data;
 static struct _disp7s_mux * disp7s_mux;
 
-void disp7s_setup(uint8_t disp7s_nummax, volatile uint8_t * port,  char * _disp7s_data, struct _disp7s_mux * __disp7s_mux)
+void disp7s_setup(uint8_t disp7s_nummax, volatile uint8_t * port,  unsigned char * _disp7s_data_array, struct _disp7s_mux * __disp7s_mux)
 {
 	DISP7S_TOTAL_NUMMAX = disp7s_nummax;
 	PORTWxDISPLAY7S_DATA = port;
-	disp7s_data = _disp7s_data;
+	disp7s_data = _disp7s_data_array;
 	disp7s_mux = __disp7s_mux;
 }
 

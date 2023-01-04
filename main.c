@@ -8,6 +8,7 @@
 #include "pid/pid.h"
 #include "Display7S/display7s.h"
 #include "display7s_setup.h"
+#include "disp7s_applevel.h"
 
 
 
@@ -247,7 +248,7 @@ int main(void)
 
 	mypid0_set();	//1 vez
 
-
+	disp7s_datarr_ErrorTh();
 int8_t systick_counter0=0;
 while (1)
 {
@@ -285,11 +286,25 @@ while (1)
 			{
 				if (TCtemperature == MAX6675_THERMOCOUPLED_OPEN)
 				{
-					lcdan_set_cursor(0, 0);
-					lcdan_print_PSTRstring(PSTR("Error TH:"));
-					MAX6675_formatText3dig(TCtemperature, str);
-					lcdan_set_cursor(DISP_CURSOR_BASKETRIGHT_START_X, 0);
-					lcdan_print_string(str);
+					//lcdan_set_cursor(0, 0);
+					//lcdan_print_PSTRstring(PSTR("Error TH:"));
+					disp7s_datarr_ErrorTh();
+
+// CONVERTIR ENTERO de 16 BITS EN BCD
+/* while (binaryInput > 0)
+    {
+      int x = (binaryInput % 10);
+      int y = x<< (shift++ << 2);
+      bcdResult |= y;
+      binaryInput /= 10;
+      printf("BCD: 0x%x \n", x);
+   }
+ *
+ */
+
+					//MAX6675_formatText3dig(TCtemperature, str);
+					//lcdan_set_cursor(DISP_CURSOR_BASKETRIGHT_START_X, 0);
+					//lcdan_print_string(str);
 				}
 				else
 				{
