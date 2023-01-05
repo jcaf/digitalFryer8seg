@@ -8,6 +8,32 @@
 #include <string.h>
 #include "utils.h"
 
+
+/*
+Arguments:
+Input:  the binary input (decimal)
+        output pointer where the BCD is placed
+Return:
+        the number of BCD returned
+
+*/
+#ifdef _int2arrayBCD_
+	int int2arrayBCD(int binaryInput, unsigned char *output)
+	{
+		int shift=0;
+		while (binaryInput > 0)
+		{
+		  int x = (binaryInput % 10);
+		  //int y = x<< (shift++ << 2);
+		  //bcdResult |= y;
+		  output[shift++] = x;
+		  binaryInput /= 10;
+	   }
+	   return shift;
+	}
+#endif
+
+
 #ifdef _dec2bcd_
 uint8_t dec2bcd(uint8_t dec)
 {

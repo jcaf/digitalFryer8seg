@@ -10,6 +10,7 @@
 #include "../smoothAlg/smoothAlg.h"
 #include "temperature.h"
 #include "../psmode_program.h"
+#include "../disp7s_applevel.h"
 
 #ifdef MAX6675_UTILS_LCD_PRINT3DIG_C
 /*****************************************************
@@ -54,6 +55,8 @@ void MAX6675_formatText3dig_C(int16_t temper, char *str_out)
 /*****************************************************
 Format with 4 digits 999 sin grados ni C
 *****************************************************/
+
+
 void MAX6675_formatText3dig(int16_t temper, char *str_out)
 {
     char buff[10];
@@ -65,26 +68,37 @@ void MAX6675_formatText3dig(int16_t temper, char *str_out)
     }
     else
     {
-        itoa(temper, buff, 10);//convierte
+    	unsigned char bcd[10];
+		int k = int2arrayBCD(temper, bcd);
 
-        //3 positions to display
-        strcpy(str_out,"   ");
+//[3][2][1][0]
+//Example:
+//[][9][1][°]
+#define BASKETRIGHT_TMPRT_DISPLAY_IDX_BASE 1 //el indice inicia en 0
+#define BASKETRIGHT_TMPRT_DISPLAY_IDX_UPPER 3
 
-        if (temper< 10)
+		//3 digitos positivo
+        if (temper<1000)
         {
-            strncpy(&str_out[2], buff, 1);
-        }
-        else if (temper<100)
-        {
-            strncpy(&str_out[1], buff, 2);
-        }
-        else if (temper<1000)
-        {
-            strncpy(&str_out[0], buff, 3);
+    		disp7s_data_array[0] = D7S_DATA_grado;//signo de grado
+
+    		int idx= BASKETRIGHT_TMPRT_DISPLAY_IDX_BASE;;
+    		for (int i=0; i<k; i++)
+    		{
+    			disp7s_data_array[idx++] = bcd[i];
+
+    		}
+    		//padding left with DISPLAYS in OFF
+    		for (; idx<=BASKETRIGHT_TMPRT_DISPLAY_IDX_UPPER; idx++)
+    		{
+    			disp7s_data_array[idx] = D7S_DATA_OFF;
+    		}
+
         }
         else
         {
-        	strcpy(str_out,"MAX");
+        	strcpy(str_out,"MAX");//out of range
+        	//luego de esto aplicar parche
         }
     }
 }

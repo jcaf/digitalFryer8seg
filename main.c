@@ -290,18 +290,6 @@ while (1)
 					//lcdan_print_PSTRstring(PSTR("Error TH:"));
 					disp7s_datarr_ErrorTh();
 
-// CONVERTIR ENTERO de 16 BITS EN BCD
-/* while (binaryInput > 0)
-    {
-      int x = (binaryInput % 10);
-      int y = x<< (shift++ << 2);
-      bcdResult |= y;
-      binaryInput /= 10;
-      printf("BCD: 0x%x \n", x);
-   }
- *
- */
-
 					//MAX6675_formatText3dig(TCtemperature, str);
 					//lcdan_set_cursor(DISP_CURSOR_BASKETRIGHT_START_X, 0);
 					//lcdan_print_string(str);
