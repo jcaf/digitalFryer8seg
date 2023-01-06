@@ -13,14 +13,14 @@
 
 void disp7s_datarr_ErrorTh(void)
 {
-	disp7s_data_array[7]= D7S_DATA_E;
-	disp7s_data_array[6]= D7S_DATA_r;
-	disp7s_data_array[5]= DISP7Sinvfix(D7S_DATA_r);
-	disp7s_data_array[4]= D7S_DATA_o;
-	disp7s_data_array[3]= D7S_DATA_r;
-	disp7s_data_array[2]= D7S_DATA_OFF,
-	disp7s_data_array[1]= DISP7Sinvfix(D7S_DATA_t);
-	disp7s_data_array[0]= D7S_DATA_h;
+	disp7s_data_array[0]= D7S_DATA_E;
+	disp7s_data_array[1]= D7S_DATA_r;
+	disp7s_data_array[2]= DISP7Sinvfix(D7S_DATA_r);
+	disp7s_data_array[3]= D7S_DATA_o;
+	disp7s_data_array[4]= D7S_DATA_r;
+	disp7s_data_array[5]= D7S_DATA_BLANK,
+	disp7s_data_array[6]= DISP7Sinvfix(D7S_DATA_t);
+	disp7s_data_array[7]= D7S_DATA_h;
 }
 
 void disp7s_on2DecPoint_basket0(void)

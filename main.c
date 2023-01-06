@@ -138,7 +138,7 @@ void fryer_init(void)
 	fryer.basket[BASKET_LEFT].kb.up = KB_LYOUT_LEFT_UP;
 	fryer.basket[BASKET_LEFT].kb.program = KB_LYOUT_PROGRAM;//comun a ambos
 
-	fryer.basket[BASKET_LEFT].display.cursor.x = DISP_CURSOR_BASKETLEFT_START_X;//0x00;
+	fryer.basket[BASKET_LEFT].display.cursor.x = BASKETLEFT_DISP_CURSOR_START_X;//0x00;
 	fryer.basket[BASKET_LEFT].display.cursor.y = 0x00;
 
 	//
@@ -148,7 +148,7 @@ void fryer_init(void)
 	fryer.basket[BASKET_RIGHT].kb.up = KB_LYOUT_RIGHT_UP;
 	fryer.basket[BASKET_RIGHT].kb.program = KB_LYOUT_PROGRAM;//comun a ambos
 
-	fryer.basket[BASKET_RIGHT].display.cursor.x = DISP_CURSOR_BASKETRIGHT_START_X;//0x0B;
+	fryer.basket[BASKET_RIGHT].display.cursor.x = BASKETRIGHT_DISP_CURSOR_START_X;//0x0B;
 	fryer.basket[BASKET_RIGHT].display.cursor.y = 0x00;
 	//--++
 }
@@ -291,7 +291,13 @@ while (1)
 					disp7s_datarr_ErrorTh();
 
 					//MAX6675_formatText3dig(TCtemperature, str);
+
+					//ene este punto deberia tener construido el array completo a mostrar en los 4 displays
+
+					//aqui defino a donde mostrarlo
 					//lcdan_set_cursor(DISP_CURSOR_BASKETRIGHT_START_X, 0);
+					//simplemente hace la copia
+
 					//lcdan_print_string(str);
 				}
 				else

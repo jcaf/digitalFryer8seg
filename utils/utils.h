@@ -13,14 +13,21 @@
 //#define _asciihex2uint8_t_
 //#define _asciihexNum2uint16_t_
 //#define _dtostrf_paddingleft_ofzeros_
-//#define _paddingLeftwZeroes_
-//#define _paddingLeftwBlanks_
+#define _paddingLeftwZeroes_
+#define _paddingLeftwBlanks_
 
-#define _int2arrayBCD_
+//#define _int2arrayBCD_LSB2MSB_
+#define _int2arrayBCD_MSB2LSB_
 
-#ifdef _int2arrayBCD_
-	int int2arrayBCD(int binaryInput, unsigned char *output);
+
+#ifdef _int2arrayBCD_LSB2MSB_
+	int int2arrayBCD_LSB2MSB(int binaryInput, unsigned char *output);
 #endif
+
+#ifdef _int2arrayBCD_MSB2LSB_
+	int int2arrayBCD_MSB2LSB(int binaryInput, unsigned char *output);
+#endif
+
 
 	#ifdef _dec2bcd_
 	uint8_t dec2bcd(uint8_t dec);

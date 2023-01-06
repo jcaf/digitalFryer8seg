@@ -15,23 +15,71 @@ Input:  the binary input (decimal)
         output pointer where the BCD is placed
 Return:
         the number of BCD returned
+        [0] = LSB
+        [1] =
 
 */
-#ifdef _int2arrayBCD_
-	int int2arrayBCD(int binaryInput, unsigned char *output)
+#ifdef _int2arrayBCD_LSB2MSB_
+int int2arrayBCD_LSB2MSB(int binaryInput, unsigned char *output)
+{
+	int shift=0;
+	if (binaryInput<0)
+    {
+        return 0;
+    }
+
+	do
 	{
-		int shift=0;
-		while (binaryInput > 0)
-		{
-		  int x = (binaryInput % 10);
-		  //int y = x<< (shift++ << 2);
-		  //bcdResult |= y;
-		  output[shift++] = x;
-		  binaryInput /= 10;
-	   }
-	   return shift;
-	}
+	  int x = (binaryInput % 10);
+	  //int y = x<< (shift++ << 2);
+	  //bcdResult |= y;
+	  output[shift++] = x;
+	  binaryInput /= 10;
+    }while (binaryInput > 0);
+
+   return shift;
+}
 #endif
+
+#ifdef _int2arrayBCD_MSB2LSB_
+int int2arrayBCD_MSB2LSB(int binaryInput, unsigned char *output)
+{
+    if (binaryInput<0)
+    {
+        return 0;
+    }
+
+    int shift=0;
+    do
+    {
+      int x = (binaryInput % 10);
+      //int y = x<< (shift++ << 2);
+      //bcdResult |= y;
+      output[shift++] = x;
+      binaryInput /= 10;
+   }while (binaryInput > 0);
+
+   //sort
+   if (1)//(shift > 0)
+   {
+       int k = shift>>1;//div por 2
+       int z = shift-1;
+       unsigned char tmp;
+        for (int i=0; i<k; i++)
+        {
+            tmp = output[i];
+            output[i] = output[z];
+            output[z] = tmp;
+            z--;
+        }
+   }
+   //
+   return shift;
+}
+
+#endif
+
+
 
 
 #ifdef _dec2bcd_

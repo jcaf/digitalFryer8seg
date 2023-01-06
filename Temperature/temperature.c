@@ -11,6 +11,7 @@
 #include "temperature.h"
 #include "../psmode_program.h"
 #include "../disp7s_applevel.h"
+#include "../utils/utils.h"
 
 #ifdef MAX6675_UTILS_LCD_PRINT3DIG_C
 /*****************************************************
@@ -61,15 +62,25 @@ void MAX6675_formatText3dig(int16_t temper, char *str_out)
 {
     char buff[10];
 
+    //initializa output Array with BLANKS
+    for (int8_t i=0; i<BASKET_DISP_MAX_CHARS_PERBASKET; i++)
+    {
+    	str_out[i] = D7S_DATA_BLANK;
+    }
+
 	if (temper == MAX6675_THERMOCOUPLED_OPEN)
 	{
-		strcpy(str_out,"N.C");
+		//strcpy(str_out,"N.C");
+		str_out[0]= D7S_DATA_n | (1<<D7S_DP);
+		str_out[1]= D7S_DATA_c;
         return;
     }
     else
     {
     	unsigned char bcd[10];
-		int k = int2arrayBCD(temper, bcd);
+		int k = int2arrayBCD_MSB2LSB(temper, bcd);
+
+
 
 //[3][2][1][0]
 //Example:
@@ -91,12 +102,13 @@ void MAX6675_formatText3dig(int16_t temper, char *str_out)
     		//padding left with DISPLAYS in OFF
     		for (; idx<=BASKETRIGHT_TMPRT_DISPLAY_IDX_UPPER; idx++)
     		{
-    			disp7s_data_array[idx] = D7S_DATA_OFF;
+    			disp7s_data_array[idx] = D7S_DATA_BLANK;
     		}
 
         }
         else
         {
+        	//disp7s_data_array[]
         	strcpy(str_out,"MAX");//out of range
         	//luego de esto aplicar parche
         }

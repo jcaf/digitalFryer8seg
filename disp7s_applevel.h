@@ -35,7 +35,7 @@
 
 //////////////////////////////////////////////////////
 // Display Off (cathode commun)
-#define D7S_DATA_OFF 0
+#define D7S_DATA_BLANK 0
 
 //////////////////////////////////////////////////////
 //E
@@ -44,6 +44,15 @@
 #define D7S_DATA_r ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(0<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
 //o
 #define D7S_DATA_o ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
+//u
+#define D7S_DATA_u ((0<<D7S_DP)|(0<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
+
+//c
+#define D7S_DATA_c ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
+
+
+//n
+#define D7S_DATA_n ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(0<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
 
 //t
 #define D7S_DATA_t ((0<<D7S_DP)|(1<<D7S_G)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))

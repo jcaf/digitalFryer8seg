@@ -4,7 +4,8 @@
  *  Created on: Dec 29, 2022
  *      Author: jcaf
 
- q = 4 3  2 1 0
+ from left to right
+ q = 0 1  2 1 4
  *   [][]-[][][]
 
  */
