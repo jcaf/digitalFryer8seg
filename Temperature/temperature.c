@@ -78,7 +78,7 @@ void MAX6675_formatText3dig(int16_t temper, char *str_out)
     else
     {
     	unsigned char bcd[10];
-		int k = int2arrayBCD_MSB2LSB(temper, bcd);
+		int k = integer_to_arraybcd_msb_lsb(temper, bcd);
 
 
 
@@ -91,7 +91,7 @@ void MAX6675_formatText3dig(int16_t temper, char *str_out)
 		//3 digitos positivo
         if (temper<1000)
         {
-    		disp7s_data_array[0] = D7S_DATA_grado;//signo de grado
+    		disp7s_data_array[0] = D7S_DATA_GRADE_CENTIGRADE;//signo de grado
 
     		int idx= BASKETRIGHT_TMPRT_DISPLAY_IDX_BASE;;
     		for (int i=0; i<k; i++)

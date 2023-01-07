@@ -25,7 +25,7 @@
 #endif
 
 #ifdef _int2arrayBCD_MSB2LSB_
-	int int2arrayBCD_MSB2LSB(int binaryInput, unsigned char *output);
+	int integer_to_arraybcd_msb_lsb(int binaryInput, unsigned char *output);
 #endif
 
 

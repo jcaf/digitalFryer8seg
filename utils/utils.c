@@ -18,6 +18,9 @@ Return:
         [0] = LSB
         [1] =
 
+if binary_input is <0, then the returned number of digits is 0
+if binary_input is >=0, then the returned number of digits as minimum is 1 onwards
+
 */
 #ifdef _int2arrayBCD_LSB2MSB_
 int int2arrayBCD_LSB2MSB(int binaryInput, unsigned char *output)
@@ -42,28 +45,31 @@ int int2arrayBCD_LSB2MSB(int binaryInput, unsigned char *output)
 #endif
 
 #ifdef _int2arrayBCD_MSB2LSB_
-int int2arrayBCD_MSB2LSB(int binaryInput, unsigned char *output)
+int integer_to_arraybcd_msb_lsb(int binaryInput, unsigned char *output)
 {
+	int num_digits=0;
+	//if is negative, then return with number of digits equal to 0
     if (binaryInput<0)
     {
-        return 0;
+        return num_digits;//0;
     }
 
-    int shift=0;
+    //if is >0, at least the number of digits must be 1 onwards
+    //int shift=0;
     do
     {
       int x = (binaryInput % 10);
       //int y = x<< (shift++ << 2);
       //bcdResult |= y;
-      output[shift++] = x;
+      output[num_digits++] = x;
       binaryInput /= 10;
    }while (binaryInput > 0);
 
    //sort
    if (1)//(shift > 0)
    {
-       int k = shift>>1;//div por 2
-       int z = shift-1;
+       int k = num_digits>>1;//div por 2
+       int z = num_digits-1;
        unsigned char tmp;
         for (int i=0; i<k; i++)
         {
@@ -74,7 +80,7 @@ int int2arrayBCD_MSB2LSB(int binaryInput, unsigned char *output)
         }
    }
    //
-   return shift;
+   return num_digits;
 }
 
 #endif

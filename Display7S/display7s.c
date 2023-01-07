@@ -54,7 +54,7 @@ inline static void disp7s_mux_Q(int8_t q)//q=transistor #
 
 
     //+-off current Q before to present new digit
-	int8_t pq=0;
+/*	int8_t pq=0;
 
 	pq= q-1;
 
@@ -63,6 +63,8 @@ inline static void disp7s_mux_Q(int8_t q)//q=transistor #
 		pq = DISP7S_TOTAL_NUMMAX-1;
 	}
 	disp7s_mux[pq].Qonoff[0]();//off
+*/
+	//__delay_us(100);
 	//-+
 	disp7s_mux[q].Qonoff[1]();//on
 
@@ -83,10 +85,11 @@ void disp7s_job(void)
     disp7s_mux[pq].Qonoff[0]();//off
     //-+
 
+    //__delay_us(100);
     *PORTWxDISPLAY7S_DATA = disp7s_data[q];
+    //disp7s_mux_Q(q);
+    disp7s_mux[q].Qonoff[1]();//on
 
-
-    disp7s_mux_Q(q);
     //
     if (++q == DISP7S_TOTAL_NUMMAX)
         {q=0x0;}

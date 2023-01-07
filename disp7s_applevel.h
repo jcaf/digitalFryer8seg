@@ -10,6 +10,7 @@
 
 #include "display7s_setup.h"
 
+extern const unsigned char DISP7_NUMERIC_ARR[10];
 
 /* Numerical 0 to 9 */
 //0x3F,//    0b0011 1111,//0
@@ -61,7 +62,7 @@
 //////////////////////////////////////////////////////
 
 //signo de grado
-#define D7S_DATA_grado ((0<<D7S_DP)|(1<<D7S_G)|(1<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(0<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
+#define D7S_DATA_GRADE_CENTIGRADE ((0<<D7S_DP)|(1<<D7S_G)|(1<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(0<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
 
 //-----------------------------------------------------
 //-----------------------------------------------------
@@ -72,4 +73,6 @@ void disp7s_on2DecPoint_basket1(void);
 void disp7s_off2DecPoint_basket0(void);
 void disp7s_off2DecPoint_basket1(void);
 
+void disp7s_fix_all_upsidedown_display(void);
+void disp7s_blank_displays(unsigned char *data, int8_t initial_position, int8_t num_displays);
 #endif /* DISP7S_APPLEVEL_H_ */

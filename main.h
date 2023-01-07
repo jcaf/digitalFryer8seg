@@ -30,6 +30,9 @@ struct _mainflag
 };
 extern struct _mainflag mainflag;
 
+//deprecar  estos 2 defines
+#define DISP_CURSOR_BASKETLEFT_START_X 0
+#define DISP_CURSOR_BASKETRIGHT_START_X 0xB
 
 
 #define BASKETLEFT_DISP_CURSOR_START_X 0x00
