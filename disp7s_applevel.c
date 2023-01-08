@@ -23,38 +23,21 @@ const unsigned char DISP7_NUMERIC_ARR[10] =
 	D7S_DATA_9,
 };
 
-/*
-void disp7s_datarr_ErrorTh(void)
+const unsigned char DIPS7S_MSG_OFF[4] =
 {
-	disp7s_data_array[0]= D7S_DATA_E;
-	disp7s_data_array[1]= D7S_DATA_r;
-	disp7s_data_array[2]= DISP7Sinvfix(D7S_DATA_r);
-	disp7s_data_array[3]= D7S_DATA_o;
-	disp7s_data_array[4]= D7S_DATA_r;
-	disp7s_data_array[5]= D7S_DATA_BLANK,
-	//disp7s_data_array[6]= DISP7Sinvfix(D7S_DATA_t);
-	disp7s_data_array[6]= D7S_DATA_BLANK;
+		D7S_DATA_O,
+		D7S_DATA_F,
+		DISP7Sinvfix(D7S_DATA_F),
+		D7S_DATA_BLANK
+};
 
-	disp7s_data_array[7]= D7S_DATA_BLANK;
-	//disp7s_data_array[7]= D7S_DATA_h;
-}
-*/
-/*
-void disp7s_datarr_ErrorTh(void)
+const unsigned char DIPS7S_MSG_PRECALENTAMIENTO[4] =
 {
-	disp7s_data_array[0]= D7S_DATA_BLANK;
-	disp7s_data_array[1]= D7S_DATA_8;
-	disp7s_data_array[2]= DISP7Sinvfix(D7S_DATA_BLANK);
-	disp7s_data_array[3]= D7S_DATA_8;
-	disp7s_data_array[4]= D7S_DATA_BLANK;
-	disp7s_data_array[5]= D7S_DATA_8,
-	//disp7s_data_array[6]= DISP7Sinvfix(D7S_DATA_t);
-	disp7s_data_array[6]= D7S_DATA_BLANK;
-
-	disp7s_data_array[7]= D7S_DATA_8;
-	//disp7s_data_array[7]= D7S_DATA_h;
-}
-*/
+		D7S_DATA_P,
+		D7S_DATA_r,
+		DISP7Sinvfix(D7S_DATA_E),
+		D7S_DATA_BLANK
+};
 void disp7s_datarr_ErrorTh(void)
 {
 	/* PARECE QUE EL ASUNTO ESTA EN EL SEGMENTO D Y E
@@ -119,10 +102,16 @@ void disp7s_blank_displays(unsigned char *data, int8_t initial_position, int8_t 
 }
 
 
-void disp7s_update_data_array(unsigned char *data, int8_t initial_position, int8_t num_digits)
+void disp7s_update_data_array(const unsigned char *data, int8_t initial_position, int8_t num_digits)
 {
 	for (int i = 0; i< num_digits; i++ )
 	{
 		disp7s_data_array[initial_position++] = data[i];
 	}
 }
+
+void disp7s_clear_all(void)
+{
+	disp7s_blank_displays(disp7s_data_array,0,DISP7S_TOTAL_NUMMAX);
+}
+

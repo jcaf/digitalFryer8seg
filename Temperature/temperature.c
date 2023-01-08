@@ -201,7 +201,7 @@ int8_t temperature_job(void)
 	{
 		if (mainflag.sysTickMs)
 		{
-			if (++MAX6675_ConversionTime_access == (uint16_t)(220.0f/SYSTICK_MS) ) //MAX6675 has max 0.22s
+			if (++MAX6675_ConversionTime_access >= (uint16_t)(220.0f/SYSTICK_MS) ) //MAX6675 has max 0.22s
 			{
 				MAX6675_ConversionTime_access = 0;
 				//

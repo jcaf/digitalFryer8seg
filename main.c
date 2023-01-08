@@ -199,7 +199,7 @@ int main(void)
 {
 	int8_t sm0 = 0;
 	int c = 0;
-	unsigned char str[10];
+	unsigned char str[10];//cambiar a char_arr
 
 
 	disp7s_init();//new
@@ -248,7 +248,7 @@ int main(void)
 
 	mypid0_set();	//1 vez
 
-//	disp7s_datarr_ErrorTh();
+
 int8_t systick_counter0=0;
 
 //DDRC = 0xFF;
@@ -256,32 +256,7 @@ int8_t systick_counter0=0;
 //PinTo1(PORTWxDISPLAY7S_Q6, PINxDISPLAY7S_Q6);
 //while (1);
 
-
-/* ok esta parte
-unsigned char bcd[BASKET_DISP_MAX_CHARS_PERBASKET];
-int k = integer_to_arraybcd_msb_lsb(101, bcd);
-int idx= 0;
-//disp7s_blank_displays(disp7s_data_array, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET-1);
-disp7s_blank_displays(disp7s_data_array, BASKETRIGHT_DISP_CURSOR_START_X, (BASKET_DISP_MAX_CHARS_PERBASKET-1)-k);
-disp7s_data_array[BASKETRIGHT_DISP_CURSOR_START_X+BASKET_DISP_MAX_CHARS_PERBASKET-1] = D7S_DATA_GRADE_CENTIGRADE;
-//
-idx= (BASKETRIGHT_DISP_CURSOR_START_X+(BASKET_DISP_MAX_CHARS_PERBASKET))-1 -k;
-//2. copy result of int2arrayBCD_MSB2LSB() to disp7s_data_array[]
-for (int i = 0; i< k; i++ )
-{
-	disp7s_data_array[idx++] = DISP7_NUMERIC_ARR[bcd[i]];
-}
-//3. Fix all upsidedown displays
-disp7s_fix_all_upsidedown_display();
-*/
-
-//OK ESTE CODIGO
 /*
-unsigned char buff[10];
-MAX6675_formatText3dig(MAX6675_THERMOCOUPLED_OPEN, buff);
-disp7s_update_data_array(buff, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
-*/
-
 while (1)
 {
 	if (isr_flag.sysTickMs)
@@ -307,7 +282,8 @@ while (1)
 	}
 	mainflag.sysTickMs = 0;
 }
-		///////////////////////////////////////
+*/
+///////////////////////////////////////
 
 	while (1)
 	{
@@ -317,27 +293,30 @@ while (1)
 			mainflag.sysTickMs = 1;
 		}
 
+		if (mainflag.sysTickMs)
+		{
+			if (++systick_counter0 == (1/SYSTICK_MS) )//ms
+			{
+				systick_counter0 = 0x00;
+				disp7s_job();
+			}
+		}
+
+
 		if (sm0 == 0)
 		{
 			/* sm0 == 0, es un init para todos los procesos q necesitan de mainflag.sysTickMs al iniciar el sistema*/
 			if ( temperature_job() == 1)
 			{
-//				if (TCtemperature == MAX6675_THERMOCOUPLED_OPEN)
-//				{
-//					//lcdan_set_cursor(0, 0);
-//					//lcdan_print_PSTRstring(PSTR("Error TH:"));
-//					//MAX6675_formatText3dig(TCtemperature, str);
-//					//lcdan_set_cursor(DISP_CURSOR_BASKETRIGHT_START_X, 0);
-//					//lcdan_print_string(str);
-//				}
-//				else
-//				{
-//					sm0++;
-//				}
-				MAX6675_formatText3dig(TCtemperature, str);
-				disp7s_update_data_array(str, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
-
-
+				if (TCtemperature == MAX6675_THERMOCOUPLED_OPEN)
+				{
+					MAX6675_formatText3dig(TCtemperature, str);
+					disp7s_update_data_array(str, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
+				}
+				else
+				{
+					sm0++;
+				}
 			}
 		}
 		else
@@ -356,7 +335,8 @@ while (1)
 						indicator_setKSysTickTime_ms(75/SYSTICK_MS);
 						indicator_On();
 						//
-						lcdan_clear();
+						//lcdan_clear();
+						disp7s_clear_all();
 
 						if (pinGetLevel_level(PGLEVEL_LYOUT_SWONOFF)== 0)	//active in low
 						{
@@ -374,8 +354,9 @@ while (1)
 							/* pin to 0*/
 							pid_pwm_set_pin(&mypid0, 0);
 
-							lcdan_set_cursor(6, 0);
-							lcdan_print_PSTRstring(PSTR("OFF"));
+							//lcdan_set_cursor(6, 0);
+							//lcdan_print_PSTRstring(PSTR("OFF"));
+							disp7s_update_data_array(DIPS7S_MSG_OFF, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 
 						}
 						/* en ambos casos, iniciar desde el principio*/
@@ -397,8 +378,11 @@ while (1)
 				{
 					kbmode_2basket_set_default();
 
-					lcdan_set_cursor(0, 0);
-					lcdan_print_PSTRstring(PSTR("MELT"));
+					//lcdan_set_cursor(0, 0);
+					//lcdan_print_PSTRstring(PSTR("MELT"));
+					disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
+
+
 					//
 					fryer.bf.preheating = 1;
 					fryer.viewmode = FRYER_VIEWMODE_PREHEATING;
@@ -493,10 +477,11 @@ while (1)
 							{
 								kbmode_default(&fryer.basket[i].kb);
 							}
-
-							lcdan_clear();
-							lcdan_set_cursor(0, 0);
-							lcdan_print_PSTRstring(PSTR("MELT"));
+//							lcdan_clear();
+//							lcdan_set_cursor(0, 0);
+//							lcdan_print_PSTRstring(PSTR("MELT"));
+							disp7s_clear_all();
+							disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 						}
 						else
 						{
@@ -527,10 +512,11 @@ while (1)
 							{
 								kbmode_default(&fryer.basket[i].kb);
 							}
-
-							lcdan_clear();
-							lcdan_set_cursor(0, 0);
-							lcdan_print_PSTRstring(PSTR("MELT"));
+//							lcdan_clear();
+//							lcdan_set_cursor(0, 0);
+//							lcdan_print_PSTRstring(PSTR("MELT"));
+							disp7s_clear_all();
+							disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 						}
 						else
 						{
