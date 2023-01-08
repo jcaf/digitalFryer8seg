@@ -11,8 +11,8 @@
 	#define DISP7S_TOTAL_NUMMAX 8
 
 	//DISLAYS DE CATODO COMUN - Todo el puerto de 8bits
-    #define PORTWxDISPLAY7S_DATA 	PORTC
-    #define PORTRxDISPLAY7S_DATA 	PINC
+    #define PORTWxDISPLAY7S_DATA 		PORTC
+    #define PORTRxDISPLAY7S_DATA 		PINC
     #define CONFIGIOxDISPLAY7S_DATA 	DDRC
 
 	///////////////////////////////////////////////////
@@ -26,8 +26,7 @@
 	#define D7S_G 4
 	#define D7S_DP 2
 
-	//Fix to inverted display
-	#define DISP7Sinvfix(data) (((data & 0x10)>>2) | ((data & 0x04)<<2) | (data & 0xEB))
+
 	#define D7S_Ginv D7S_DP
 	#define D7S_DPinv D7S_G
 

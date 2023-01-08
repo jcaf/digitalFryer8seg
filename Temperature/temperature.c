@@ -58,61 +58,35 @@ Format with 4 digits 999 sin grados ni C
 *****************************************************/
 
 
-void MAX6675_formatText3dig(int16_t temper, char *str_out)
+void MAX6675_formatText3dig(int16_t temperatura, unsigned char *str_out)
 {
-    char buff[10];
+	//1. clear the basket display
+	disp7s_blank_displays(str_out, 0, BASKET_DISP_MAX_CHARS_PERBASKET);
 
-    //initializa output Array with BLANKS
-    for (int8_t i=0; i<BASKET_DISP_MAX_CHARS_PERBASKET; i++)
-    {
-    	str_out[i] = D7S_DATA_BLANK;
-    }
-
-	if (temper == MAX6675_THERMOCOUPLED_OPEN)
+	if (temperatura == MAX6675_THERMOCOUPLED_OPEN)
 	{
-		//strcpy(str_out,"N.C");
-		str_out[0]= D7S_DATA_n | (1<<D7S_DP);
-		str_out[1]= D7S_DATA_c;
-        return;
-    }
-    else
-    {
-    	unsigned char bcd[10];
-		int k = integer_to_arraybcd_msb_lsb(temper, bcd);
-
-
-
-//[3][2][1][0]
-//Example:
-//[][9][1][°]
-#define BASKETRIGHT_TMPRT_DISPLAY_IDX_BASE 1 //el indice inicia en 0
-#define BASKETRIGHT_TMPRT_DISPLAY_IDX_UPPER 3
-
-		//3 digitos positivo
-        if (temper<1000)
-        {
-    		disp7s_data_array[0] = D7S_DATA_GRADE_CENTIGRADE;//signo de grado
-
-    		int idx= BASKETRIGHT_TMPRT_DISPLAY_IDX_BASE;;
-    		for (int i=0; i<k; i++)
-    		{
-    			disp7s_data_array[idx++] = bcd[i];
-
-    		}
-    		//padding left with DISPLAYS in OFF
-    		for (; idx<=BASKETRIGHT_TMPRT_DISPLAY_IDX_UPPER; idx++)
-    		{
-    			disp7s_data_array[idx] = D7S_DATA_BLANK;
-    		}
-
-        }
-        else
-        {
-        	//disp7s_data_array[]
-        	strcpy(str_out,"MAX");//out of range
-        	//luego de esto aplicar parche
-        }
-    }
+		str_out[0] = D7S_DATA_n | (1<< D7S_DP);
+		str_out[1] = D7S_DATA_c;
+	}
+	else if (temperatura>999)
+	{
+		str_out[0] = D7S_DATA_o;
+		str_out[1] = D7S_DATA_u;
+		str_out[2] = D7S_DATA_t;
+	}
+	else//numerical
+	{
+		unsigned char bcd[10];
+		int k = integer_to_arraybcd_msb_lsb(temperatura, bcd);
+		int idx= ((BASKET_DISP_MAX_CHARS_PERBASKET))-1 -k;
+		for (int i = 0; i< k; i++ )
+		{
+			str_out[idx++] = DISP7_NUMERIC_ARR[bcd[i]];
+		}
+		str_out[BASKET_DISP_MAX_CHARS_PERBASKET-1] = D7S_DATA_GRADE_CENTIGRADE;
+	}
+	//fix right basket: upsidedown displays
+	disp7s_fix_upsidedown_display(&str_out[2]);
 }
 #endif
 /*****************************************************

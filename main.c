@@ -255,19 +255,12 @@ int8_t systick_counter0=0;
 //PORTC = DISP7Sinvfix(D7S_DATA_t);
 //PinTo1(PORTWxDISPLAY7S_Q6, PINxDISPLAY7S_Q6);
 //while (1);
+
+
+/* ok esta parte
 unsigned char bcd[BASKET_DISP_MAX_CHARS_PERBASKET];
 int k = integer_to_arraybcd_msb_lsb(101, bcd);
-
-
 int idx= 0;
-//idx= BASKETRIGHT_DISP_CURSOR_START_X;
-//1. blank all display
-//for (int i=0; i<BASKET_DISP_MAX_CHARS_PERBASKET; i++)
-//{
-//	disp7s_data_array[idx++] = D7S_DATA_BLANK;
-//}
-//
-
 //disp7s_blank_displays(disp7s_data_array, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET-1);
 disp7s_blank_displays(disp7s_data_array, BASKETRIGHT_DISP_CURSOR_START_X, (BASKET_DISP_MAX_CHARS_PERBASKET-1)-k);
 disp7s_data_array[BASKETRIGHT_DISP_CURSOR_START_X+BASKET_DISP_MAX_CHARS_PERBASKET-1] = D7S_DATA_GRADE_CENTIGRADE;
@@ -280,6 +273,14 @@ for (int i = 0; i< k; i++ )
 }
 //3. Fix all upsidedown displays
 disp7s_fix_all_upsidedown_display();
+*/
+
+//OK ESTE CODIGO
+/*
+unsigned char buff[10];
+MAX6675_formatText3dig(MAX6675_THERMOCOUPLED_OPEN, buff);
+disp7s_update_data_array(buff, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
+*/
 
 while (1)
 {

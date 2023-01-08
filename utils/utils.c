@@ -23,12 +23,12 @@ if binary_input is >=0, then the returned number of digits as minimum is 1 onwar
 
 */
 #ifdef _int2arrayBCD_LSB2MSB_
-int int2arrayBCD_LSB2MSB(int binaryInput, unsigned char *output)
+int integer_to_arraybcd_lsb_msb(int binaryInput, unsigned char *output)
 {
-	int shift=0;
+	int num_digits=0;
 	if (binaryInput<0)
     {
-        return 0;
+        return num_digits;//0;
     }
 
 	do
@@ -36,11 +36,11 @@ int int2arrayBCD_LSB2MSB(int binaryInput, unsigned char *output)
 	  int x = (binaryInput % 10);
 	  //int y = x<< (shift++ << 2);
 	  //bcdResult |= y;
-	  output[shift++] = x;
+	  output[num_digits++] = x;
 	  binaryInput /= 10;
     }while (binaryInput > 0);
 
-   return shift;
+   return num_digits;
 }
 #endif
 

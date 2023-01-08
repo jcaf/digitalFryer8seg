@@ -65,6 +65,8 @@ extern const unsigned char DISP7_NUMERIC_ARR[10];
 #define D7S_DATA_GRADE_CENTIGRADE ((0<<D7S_DP)|(1<<D7S_G)|(1<<D7S_F)|(0<<D7S_E)|(0<<D7S_D)|(0<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
 
 //-----------------------------------------------------
+//Fix to inverted display
+#define DISP7Sinvfix(data) (((data & 0x10)>>2) | ((data & 0x04)<<2) | (data & 0xEB))
 //-----------------------------------------------------
 
 void disp7s_datarr_ErrorTh(void);
@@ -73,6 +75,10 @@ void disp7s_on2DecPoint_basket1(void);
 void disp7s_off2DecPoint_basket0(void);
 void disp7s_off2DecPoint_basket1(void);
 
+void disp7s_fix_upsidedown_display(unsigned char *data);
 void disp7s_fix_all_upsidedown_display(void);
 void disp7s_blank_displays(unsigned char *data, int8_t initial_position, int8_t num_displays);
+void disp7s_update_data_array(unsigned char *data, int8_t initial_position, int8_t num_digits);
+
+
 #endif /* DISP7S_APPLEVEL_H_ */

@@ -117,3 +117,12 @@ void disp7s_blank_displays(unsigned char *data, int8_t initial_position, int8_t 
 		data[idx++] = D7S_DATA_BLANK;
 	}
 }
+
+
+void disp7s_update_data_array(unsigned char *data, int8_t initial_position, int8_t num_digits)
+{
+	for (int i = 0; i< num_digits; i++ )
+	{
+		disp7s_data_array[initial_position++] = data[i];
+	}
+}
