@@ -199,7 +199,7 @@ int main(void)
 {
 	int8_t sm0 = 0;
 	int c = 0;
-	char str[10];
+	unsigned char str[10];
 
 
 	disp7s_init();//new
@@ -290,6 +290,12 @@ while (1)
 		mainflag.sysTickMs = 1;
 	}
 	//----------------------------------
+	if ( temperature_job() == 1)
+	{
+		MAX6675_formatText3dig(TCtemperature, str);
+		disp7s_update_data_array(str, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
+
+	}
 	if (mainflag.sysTickMs)
 	{
 		if (++systick_counter0 == (1/SYSTICK_MS) )//ms
@@ -316,26 +322,21 @@ while (1)
 			/* sm0 == 0, es un init para todos los procesos q necesitan de mainflag.sysTickMs al iniciar el sistema*/
 			if ( temperature_job() == 1)
 			{
-				if (TCtemperature == MAX6675_THERMOCOUPLED_OPEN)
-				{
-					//lcdan_set_cursor(0, 0);
-					//lcdan_print_PSTRstring(PSTR("Error TH:"));
-					disp7s_datarr_ErrorTh();
+//				if (TCtemperature == MAX6675_THERMOCOUPLED_OPEN)
+//				{
+//					//lcdan_set_cursor(0, 0);
+//					//lcdan_print_PSTRstring(PSTR("Error TH:"));
+//					//MAX6675_formatText3dig(TCtemperature, str);
+//					//lcdan_set_cursor(DISP_CURSOR_BASKETRIGHT_START_X, 0);
+//					//lcdan_print_string(str);
+//				}
+//				else
+//				{
+//					sm0++;
+//				}
+				MAX6675_formatText3dig(TCtemperature, str);
+				disp7s_update_data_array(str, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 
-					//MAX6675_formatText3dig(TCtemperature, str);
-
-					//ene este punto deberia tener construido el array completo a mostrar en los 4 displays
-
-					//aqui defino a donde mostrarlo
-					//lcdan_set_cursor(DISP_CURSOR_BASKETRIGHT_START_X, 0);
-					//simplemente hace la copia
-
-					//lcdan_print_string(str);
-				}
-				else
-				{
-					sm0++;
-				}
 
 			}
 		}
