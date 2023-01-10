@@ -86,9 +86,13 @@ void disp7s_off2DecPoint_basket1(void);
 
 void disp7s_fix_upsidedown_display(unsigned char *data);
 void disp7s_fix_all_upsidedown_display(void);
-void disp7s_blank_displays(unsigned char *data, int8_t initial_position, int8_t num_displays);
+void disp7s_blank_displays(unsigned char *data, int8_t initial_position, int8_t num_digits);
 void disp7s_update_data_array(const unsigned char *data, int8_t initial_position, int8_t num_digits);
 void disp7s_clear_all(void);
+void integer_to_arraybcd_msb_lsb_paddingleft_blank(int value, unsigned char *arraybcd, int8_t num_digits);
+void disp7s_decimalpoint_on(unsigned char *dig);
+void disp7s_decimalpoint_off(unsigned char *dig);
+
 
 #endif /* DISP7S_APPLEVEL_H_ */
 

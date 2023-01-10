@@ -54,27 +54,28 @@ void disp7s_datarr_ErrorTh(void)
 	disp7s_data_array[7]= D7S_DATA_8;
 	//disp7s_data_array[7]= D7S_DATA_h;
 }
-void disp7s_on2DecPoint_basket0(void)
-{
-	OR_BITWISE(disp7s_data_array[1],(1<< D7S_DPinv));
-	OR_BITWISE(disp7s_data_array[2],(1<< D7S_DP));
-}
-void disp7s_on2DecPoint_basket1(void)
-{
-	OR_BITWISE(disp7s_data_array[5],(1<< D7S_DPinv));
-	OR_BITWISE(disp7s_data_array[6],(1<< D7S_DP));
-}
-
-void disp7s_off2DecPoint_basket0(void)
-{
-	AND_BITWISE(disp7s_data_array[1],~(1<< D7S_DPinv));
-	AND_BITWISE(disp7s_data_array[2],~(1<< D7S_DP));
-}
-void disp7s_off2DecPoint_basket1(void)
-{
-	AND_BITWISE(disp7s_data_array[5],~(1<< D7S_DPinv));
-	AND_BITWISE(disp7s_data_array[6],~(1<< D7S_DP));
-}
+//
+//void disp7s_on2DecPoint_basket0(void)
+//{
+//	OR_BITWISE(disp7s_data_array[1],(1<< D7S_DPinv));
+//	OR_BITWISE(disp7s_data_array[2],(1<< D7S_DP));
+//}
+//void disp7s_on2DecPoint_basket1(void)
+//{
+//	OR_BITWISE(disp7s_data_array[5],(1<< D7S_DPinv));
+//	OR_BITWISE(disp7s_data_array[6],(1<< D7S_DP));
+//}
+//
+//void disp7s_off2DecPoint_basket0(void)
+//{
+//	AND_BITWISE(disp7s_data_array[1],~(1<< D7S_DPinv));
+//	AND_BITWISE(disp7s_data_array[2],~(1<< D7S_DP));
+//}
+//void disp7s_off2DecPoint_basket1(void)
+//{
+//	AND_BITWISE(disp7s_data_array[5],~(1<< D7S_DPinv));
+//	AND_BITWISE(disp7s_data_array[6],~(1<< D7S_DP));
+//}
 
 //parsear a toda el array es lo mejor
 void disp7s_fix_upsidedown_display(unsigned char *data)
@@ -92,10 +93,10 @@ void disp7s_fix_all_upsidedown_display(void)
 	disp7s_fix_upsidedown_display(&disp7s_data_array[2]);
 	disp7s_fix_upsidedown_display(&disp7s_data_array[6]);
 }
-void disp7s_blank_displays(unsigned char *data, int8_t initial_position, int8_t num_displays)
+void disp7s_blank_displays(unsigned char *data, int8_t initial_position, int8_t num_digits)
 {
 	int8_t idx = initial_position;
-	for (int i=0; i<num_displays; i++)
+	for (int i=0; i<num_digits; i++)
 	{
 		data[idx++] = D7S_DATA_BLANK;
 	}
@@ -115,3 +116,28 @@ void disp7s_clear_all(void)
 	disp7s_blank_displays(disp7s_data_array,0,DISP7S_TOTAL_NUMMAX);
 }
 
+void integer_to_arraybcd_msb_lsb_paddingleft_blank(int value, unsigned char *arraybcd, int8_t num_digits)
+{
+	unsigned char bcd[10];
+
+	//blank all buffer
+	disp7s_blank_displays(arraybcd,0,num_digits);
+
+	int length = integer_to_arraybcd_msb_lsb(value, bcd);
+	int idx= num_digits - length;
+	for (int i = 0; i<length; i++ )
+	{
+		arraybcd[idx++] = DISP7_NUMERIC_ARR[bcd[i]];
+	}
+}
+
+void disp7s_decimalpoint_on(unsigned char *dig)
+{
+
+	OR_BITWISE(*dig, (1<< D7S_DP) );
+}
+void disp7s_decimalpoint_off(unsigned char *dig)
+{
+
+	AND_BITWISE(*dig, ~(1<< D7S_DP) );
+}

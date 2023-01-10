@@ -30,7 +30,7 @@ int blinkIsActive=0;
 int8_t psmode_program(void)
 {
 	char codret = 0;
-	char str[10];
+	unsigned char str[10];
 	//
 	static struct _blink blink;
 	blink_set(&blink);

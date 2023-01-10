@@ -6,10 +6,13 @@
  */
 #include "main.h"
 #include "indicator/indicator.h"
+#include "disp7s_applevel.h"
+
+//LOS TIEMPOS TIENEN QUE SER COMPATIBLES CON 16 BITS Y NO CON 8 BITS
 
 #define PSMODE_OPERATIVE_BLINK_TIMER_KMAX (400/SYSTICK_MS)			//Xms/10ms de acceso
 #define PSMODE_OPERATIVE_EDITCYCLE_TIMERTIMEOUT_K (3000/SYSTICK_MS)	//5000ms/10ms
-
+/*
 //build to print Left time mm:ss
 void build_cookCycle_string(struct _t *t, char *str)
 {
@@ -22,6 +25,30 @@ void build_cookCycle_string(struct _t *t, char *str)
 	paddingLeftwZeroes(buff, 2);
 	strcat(str, buff);
 }
+*/
+//build to print Left time mm:ss
+void build_cookCycle_string(struct _t *t, unsigned char *str)
+{
+	unsigned char buff[2];
+	integer_to_arraybcd_msb_lsb_paddingleft_blank(t->min, buff, 2);
+	for (int8_t i = 0; i<2; i++)
+	{
+		str[i] = buff[i];
+	}
+	integer_to_arraybcd_msb_lsb_paddingleft_blank(t->sec, buff, 2);
+	int8_t idx = 0;
+	for (int8_t i = 2; i<4; i++)
+	{
+		str[i] = buff[idx++];
+	}
+	//on decimal point
+	disp7s_decimalpoint_on(&str[1]);
+	disp7s_decimalpoint_on(&str[2]);
+	//fix inverted display
+	disp7s_fix_upsidedown_display(&str[2]);
+}
+
+
 
 void cookCycle_hotUpdate(struct _t *TcookCycle_setPoint_toUpdate, struct _t *TcookCycle_setPoint_current,struct _t *Tcookcycle_timingrunning)
 {
@@ -49,7 +76,7 @@ char lcdanBuff[LCDAN_ROW][LCDAN_COL];
 
 void psmode_operative_init(void)
 {
-	char str[20];
+	unsigned char str[20];
 
 	//++--
 	for (int i=0; i<BASKET_MAXSIZE; i++)
@@ -77,9 +104,12 @@ void psmode_operative_init(void)
 			//lcdan_clear();
 			//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
 			//lcdan_print_string(str);
-			lcdanBuff_clear(lcdanBuff);
-			lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-			lcdanBuff_dump2device(lcdanBuff);
+
+			//lcdanBuff_clear(lcdanBuff);
+			//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
+			//lcdanBuff_dump2device(lcdanBuff);
+
+			disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 		}
 
 		//
@@ -94,7 +124,7 @@ void psmode_operative_init(void)
 
 void p1(void)
 {
-	char str[20];
+	unsigned char str[20];
 	for (int i=0; i<BASKET_MAXSIZE; i++)
 	{
 		blink_set(&fryer.basket[i].blink);
@@ -185,8 +215,9 @@ void p1(void)
 						build_cookCycle_string(&fryer.basket[i].cookCycle.time, str);
 						//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
 						//lcdan_print_string(str);
-						lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-						lcdanBuff_dump2device(lcdanBuff);
+						//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
+						//lcdanBuff_dump2device(lcdanBuff);
+						disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 					}
 				}
 			}
@@ -223,7 +254,9 @@ void p1(void)
 				{
 					if (fryer.basket[i].blink.bf.toggle == BLINK_TOGGLE_SET_BLANK)
 					{
-						strcpy(str,"     ");
+						//strcpy(str,"     ");
+						disp7s_blank_displays(str,0,BASKET_DISP_MAX_CHARS_PERBASKET);
+
 					}
 					else
 					{
@@ -231,8 +264,9 @@ void p1(void)
 					}
 					//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
 					//lcdan_print_string(str);
-					lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-					lcdanBuff_dump2device(lcdanBuff);
+					//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
+					//lcdanBuff_dump2device(lcdanBuff);
+					disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 				}
 				//
 			}
@@ -349,7 +383,7 @@ void p2(void)
 }
 void p3(void)
 {
-	char str[20];
+	unsigned char str[20];
 	for (int i=0; i<BASKET_MAXSIZE; i++)
 	{
 		blink_set(&fryer.basket[i].blink);
@@ -363,8 +397,9 @@ void p3(void)
 				build_cookCycle_string(&fryer.basket[i].cookCycle.time, str);
 				//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
 				//lcdan_print_string(str);
-				lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-				lcdanBuff_dump2device(lcdanBuff);
+				//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
+				//lcdanBuff_dump2device(lcdanBuff);
+				disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 				//
 				fryer.basket[i].display.bf.print_cookCycle = 0;
 			}
@@ -373,16 +408,19 @@ void p3(void)
 			{
 				if (fryer.basket[i].blink.bf.toggle == BLINK_TOGGLE_SET_BLANK)
 				{
-					strcpy(str,"     ");
+					//strcpy(str,"     ");
+					disp7s_blank_displays(str,0,BASKET_DISP_MAX_CHARS_PERBASKET);
 				}
 				else//BLINK_TOGGLE_SET_TEXT
 				{
-					strcpy(str,"DONE ");
+//TERMINAR CON DONE!!!
+//					strcpy(str,"DONE ");
 				}
 				//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
 				//lcdan_print_string(str);
-				lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-				lcdanBuff_dump2device(lcdanBuff);
+				//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
+				//lcdanBuff_dump2device(lcdanBuff);
+				disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 			}
 		}
 

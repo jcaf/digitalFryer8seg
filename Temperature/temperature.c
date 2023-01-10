@@ -12,6 +12,8 @@
 #include "../psmode_program.h"
 #include "../disp7s_applevel.h"
 #include "../utils/utils.h"
+#include "../disp7s_applevel.h"
+
 
 #ifdef MAX6675_UTILS_LCD_PRINT3DIG_C
 /*****************************************************
@@ -76,13 +78,16 @@ void MAX6675_formatText3dig(int16_t temperatura, unsigned char *str_out)
 	}
 	else//numerical
 	{
-		unsigned char bcd[10];
-		int k = integer_to_arraybcd_msb_lsb(temperatura, bcd);
-		int idx= ((BASKET_DISP_MAX_CHARS_PERBASKET))-1 -k;
-		for (int i = 0; i< k; i++ )
-		{
-			str_out[idx++] = DISP7_NUMERIC_ARR[bcd[i]];
-		}
+
+		integer_to_arraybcd_msb_lsb_paddingleft_blank(temperatura, str_out, BASKET_DISP_MAX_CHARS_PERBASKET-1 );
+
+		//unsigned char bcd[10];
+		//int k = integer_to_arraybcd_msb_lsb(temperatura, bcd);
+		//int idx= ((BASKET_DISP_MAX_CHARS_PERBASKET))-1 -k;
+		//for (int i = 0; i< k; i++ )
+		//{
+		//	str_out[idx++] = DISP7_NUMERIC_ARR[bcd[i]];
+		//}
 		str_out[BASKET_DISP_MAX_CHARS_PERBASKET-1] = D7S_DATA_GRADE_CENTIGRADE;
 	}
 	//fix right basket: upsidedown displays

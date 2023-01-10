@@ -13,7 +13,7 @@
 int8_t psmode_viewTemp(void)
 {
 	char codret = 0;
-	char str[10];
+	unsigned char str[10];
 
 	//fryer.ps_program.sm0 avanza por la tecla e internamente
 	if (fryer.ps_viewTemp.sm0 == 0)

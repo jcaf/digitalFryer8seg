@@ -1,3 +1,46 @@
+/*
+ Atmega32
+ ----------------------------------------
+ 1)    http://www.engbedded.com/fusecalc/
+ lock bits:
+ http://eleccelerator.com/fusecalc/fusecalc.php?chip=atmega328p
+ 2) verificar que responda el atmega (ONLY A RESET)
+ [jcaf@jcafpc ~]$ avrdude -c usbasp -B5 -p m32
+
+ 3) programar fuse (sin preservar EEPROM)
+ -U lfuse:w:0xbf:m -U hfuse:w:0xcf:m
+ [jcaf@jcafpc ~]$ avrdude -c usbasp -B5 -p m32 -U lfuse:w:0xbf:m -U hfuse:w:0xcf:m
+
+ 4) GRABAR EL CODIGO FUENTE CON EL COMANDO ACOSTUMBRADO
+ [root@JCAFPC Release]# avrdude -c usbasp -B5 -p m32 -U flash:w:digitalFryer.hex
+ [root@JCAFPC Release]# avrdude -c usbasp -B1 -p m32 -V -U flash:w:digitalFryer.hex (SIN VERIFICAR)
+ [jcaf@JCAFPC Release]$ avrdude -c usbasp -B5 -p m32 (ONLY A RESET)
+
+ NUEVO
+ [root@JCAFPC Release]# avrdude -c usbasp -B0.3 -p m32 -V -U flash:w:digitalFryer.hex (MAS RAPIDO!)
+ Tambien puede ser sin -BX.. cuando ya esta bien configurado los fuses:
+ [root@JCAFPC Release]# avrdude -c usbasp -p m32 -U flash:w:digitalFryer.hex
+
+ 5)
+ 8:50 a. m.
+ GRABAR LA EEPROM
+ [jcaf@jcafpc Release]$ avrdude -c usbasp -B4 -p m32 -V -U eeprom:w:digitalFryer.eep
+
+ 6) programar fuse (PRESERVANDO EEPROM)
+
+ avrdude -c usbasp -B5 -p m32 -U lfuse:w:0xbf:m -U hfuse:w:0xc7:m
+
+ 7) Verificar los fuses
+ [jcaf@jcafpc Release]$ avrdude -c usbasp -B4 -p m32 -U lfuse:r:-:i -v
+
+ +++++++++++++++++++++++
+ Acomodar para Atmega32A
+ proteger flash (modo 3): lectura y escritura
+
+ avrdude -c usbasp -B10 -p m32 -U lock:w:0xFC:m
+
+ (ignorar el error de 0x3C... pues los 2 bits de mayor peso no estan implentados)
+*/
 
 #include "main.h"
 #include "pinGetLevel/pinGetLevel.h"
@@ -27,7 +70,7 @@ struct _job job_captureTemperature;
 const struct _job job_reset;
 
 //k-load from EEPROM
-struct _t EEMEM COOKTIME[BASKET_MAXSIZE]= { {7, 0}, {7,0} };    //mm:ss
+struct _t EEMEM COOKTIME[BASKET_MAXSIZE]= { {7, 10}, {7,10} };    //mm:ss
 
 /* Declare PID objects*/
 struct PID mypid0;
@@ -153,54 +196,13 @@ void fryer_init(void)
 	//--++
 }
 
-void ind(void)
-{
 
-	int8_t c=0;
-	int8_t i=0;
-	while (1)
-	{
-		if (isr_flag.sysTickMs)
-		{
-			isr_flag.sysTickMs = 0;
-			mainflag.sysTickMs = 1;
-		}
-		if (mainflag.sysTickMs)
-		{
-			if (++c == (20/SYSTICK_MS))    //20ms
-			{
-				c = 0;
-
-				ikb_job();
-			}
-		}
-
-
-
-		if (ikb_key_is_ready2read(fryer.basket[i].kb.down))
-		{
-			ikb_key_was_read(fryer.basket[i].kb.down);
-
-			indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
-			indicator_On();
-		}
-		if (ikb_key_is_ready2read(fryer.basket[i].kb.up))
-		{
-			ikb_key_was_read(fryer.basket[i].kb.up);
-			indicator_setKSysTickTime_ms(75/SYSTICK_MS);
-			indicator_On();
-		}
-		indicator_job();
-		mainflag.sysTickMs = 0;
-	}
-}
 
 int main(void)
 {
 	int8_t sm0 = 0;
 	int c = 0;
 	unsigned char str[10];//cambiar a char_arr
-
 
 	disp7s_init();//new
 
@@ -257,6 +259,32 @@ int8_t systick_counter0=0;
 //while (1);
 
 /*
+fryer.basket[0].cookCycle.time.min=7;
+fryer.basket[0].cookCycle.time.sec=38;
+build_cookCycle_string(&fryer.basket[0].cookCycle.time, str);
+disp7s_update_data_array(str, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
+
+
+while (1)
+{
+	if (isr_flag.sysTickMs)
+	{
+		isr_flag.sysTickMs = 0;
+		mainflag.sysTickMs = 1;
+	}
+	if (mainflag.sysTickMs)
+	{
+		if (++systick_counter0 == (1/SYSTICK_MS) )//ms
+		{
+			systick_counter0 = 0x00;
+			disp7s_job();
+		}
+	}
+	mainflag.sysTickMs = 0;
+}
+*/
+
+/*
 while (1)
 {
 	if (isr_flag.sysTickMs)
@@ -273,6 +301,21 @@ while (1)
 	}
 	if (mainflag.sysTickMs)
 	{
+		if (++c == (20/SYSTICK_MS))    //20ms
+		{
+			c = 0;
+			//
+			pinGetLevel_job();
+			//---------------------------
+			if (pinGetLevel_hasChanged(PGLEVEL_LYOUT_SWONOFF))
+			{
+				pinGetLevel_clearChange(PGLEVEL_LYOUT_SWONOFF);
+				//
+				indicator_setKSysTickTime_ms(75/SYSTICK_MS);
+				indicator_On();
+			}
+		}
+
 		if (++systick_counter0 == (1/SYSTICK_MS) )//ms
 		{
 			systick_counter0 = 0x00;
@@ -280,9 +323,13 @@ while (1)
 		}
 
 	}
+
+	indicator_job();
 	mainflag.sysTickMs = 0;
 }
+
 */
+
 ///////////////////////////////////////
 
 	while (1)
@@ -295,13 +342,12 @@ while (1)
 
 		if (mainflag.sysTickMs)
 		{
-			if (++systick_counter0 == (1/SYSTICK_MS) )//ms
+			if (++systick_counter0 >= (1/SYSTICK_MS) )//ms
 			{
 				systick_counter0 = 0x00;
 				disp7s_job();
 			}
 		}
-
 
 		if (sm0 == 0)
 		{
@@ -332,16 +378,17 @@ while (1)
 					//---------------------------
 					if (pinGetLevel_hasChanged(PGLEVEL_LYOUT_SWONOFF))
 					{
+						pinGetLevel_clearChange(PGLEVEL_LYOUT_SWONOFF);
+
+						//
 						indicator_setKSysTickTime_ms(75/SYSTICK_MS);
 						indicator_On();
 						//
-						//lcdan_clear();
 						disp7s_clear_all();
 
 						if (pinGetLevel_level(PGLEVEL_LYOUT_SWONOFF)== 0)	//active in low
 						{
 							/* ON*/
-
 							/* forzar en sacar el nivel del PWM para el primer periodo, ya que T = 10s*/
 							int16_t error = mypid0_adjust_kei_windup(); /* dejar preparado para job()*/
 							pid_find_ktop_ms(&mypid0, error);
@@ -350,20 +397,18 @@ while (1)
 						else
 						{
 							/* OFF */
-
 							/* pin to 0*/
 							pid_pwm_set_pin(&mypid0, 0);
-
-							//lcdan_set_cursor(6, 0);
-							//lcdan_print_PSTRstring(PSTR("OFF"));
 							disp7s_update_data_array(DIPS7S_MSG_OFF, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 
+							sm0 = 0x00;
+							fryer_init();
+
 						}
-						/* en ambos casos, iniciar desde el principio*/
-						sm0 = 0x00;
-						fryer_init();
-						//
-						pinGetLevel_clearChange(PGLEVEL_LYOUT_SWONOFF);
+						// en ambos casos, iniciar desde el principio
+						//sm0 = 0x00;	//bug deberia de estar solo para cuando entra a OFF
+						//fryer_init();
+
 					}
 					//chispero();
 					ikb_job();
@@ -378,17 +423,16 @@ while (1)
 				{
 					kbmode_2basket_set_default();
 
-					//lcdan_set_cursor(0, 0);
 					//lcdan_print_PSTRstring(PSTR("MELT"));
 					disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
-
-
 					//
 					fryer.bf.preheating = 1;
 					fryer.viewmode = FRYER_VIEWMODE_PREHEATING;
 					//
 
 					//igDeteccFlama_resetJob();
+
+//para poder testear la primera parte
 					sm0++;
 				}
 				else if (sm0 == 2)
@@ -406,7 +450,11 @@ while (1)
 
 					if (fryer.viewmode == FRYER_VIEWMODE_PREHEATING)
 					{
-						if (TCtemperature >= tmprture_coccion.TC)
+//PARA PODER ENTRAR DE FRENTE
+
+//						if (TCtemperature >= tmprture_coccion.TC)
+						if (TCtemperature >= 0)
+
 						{
 							//
 							indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
@@ -454,7 +502,7 @@ while (1)
 						//added 7 abr 2022
 						else//KB_BEFORE_THR
 						{
-							/* Visualizar la temperatura */
+							/// Visualizar la temperatura
 							fryer.viewmode = FRYER_VIEWMODE_VIEWCOOKTEMP;
 							fryer.ps_viewTemp = ps_reset;
 
@@ -477,8 +525,6 @@ while (1)
 							{
 								kbmode_default(&fryer.basket[i].kb);
 							}
-//							lcdan_clear();
-//							lcdan_set_cursor(0, 0);
 //							lcdan_print_PSTRstring(PSTR("MELT"));
 							disp7s_clear_all();
 							disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
@@ -512,8 +558,6 @@ while (1)
 							{
 								kbmode_default(&fryer.basket[i].kb);
 							}
-//							lcdan_clear();
-//							lcdan_set_cursor(0, 0);
 //							lcdan_print_PSTRstring(PSTR("MELT"));
 							disp7s_clear_all();
 							disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
@@ -538,7 +582,7 @@ while (1)
 					psmode_operative();
 				}
 
-				/* PID control */
+				// PID control
 				int16_t error = mypid0_adjust_kei_windup();
 				pid_job(&mypid0, error);
 				//
@@ -549,15 +593,16 @@ while (1)
 			}
 
 			/* actua sobre el buzzer */
-			indicator_job();
+			//indicator_job(); //bug, no debe estar en este punto, sino, afuera...porque al hacer off, no tiene control de llear el indicator_job
 
 			temperature_job();
 
 		}//end sm0 == 0
 
-		/* ---------- */
+		indicator_job();
+
 		mainflag.sysTickMs = 0;
-	}
+	}//while end
 	return 0;
 }
 
