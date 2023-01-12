@@ -31,6 +31,14 @@ const unsigned char DIPS7S_MSG_OFF[4] =
 		D7S_DATA_BLANK
 };
 
+const unsigned char DIPS7S_MSG_donE[4] =
+{
+		D7S_DATA_d,
+		D7S_DATA_o,
+		DISP7Sinvfix(D7S_DATA_n),
+		D7S_DATA_E
+};
+
 const unsigned char DIPS7S_MSG_PRECALENTAMIENTO[4] =
 {
 		D7S_DATA_P,
@@ -122,6 +130,25 @@ void integer_to_arraybcd_msb_lsb_paddingleft_blank(int value, unsigned char *arr
 
 	//blank all buffer
 	disp7s_blank_displays(arraybcd,0,num_digits);
+
+	int length = integer_to_arraybcd_msb_lsb(value, bcd);
+	int idx= num_digits - length;
+	for (int i = 0; i<length; i++ )
+	{
+		arraybcd[idx++] = DISP7_NUMERIC_ARR[bcd[i]];
+	}
+}
+void integer_to_arraybcd_msb_lsb_paddingleft_zeroes(int value, unsigned char *arraybcd, int8_t num_digits)
+{
+	unsigned char bcd[10];
+
+	//blank all buffer
+	//disp7s_blank_displays(arraybcd,0,num_digits);
+	for (int8_t i=0; i<num_digits; i++)
+	{
+		arraybcd[i] = D7S_DATA_0;
+	}
+
 
 	int length = integer_to_arraybcd_msb_lsb(value, bcd);
 	int idx= num_digits - length;

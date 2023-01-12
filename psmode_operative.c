@@ -35,12 +35,14 @@ void build_cookCycle_string(struct _t *t, unsigned char *str)
 	{
 		str[i] = buff[i];
 	}
-	integer_to_arraybcd_msb_lsb_paddingleft_blank(t->sec, buff, 2);
+
+	integer_to_arraybcd_msb_lsb_paddingleft_zeroes(t->sec, buff, 2);
 	int8_t idx = 0;
 	for (int8_t i = 2; i<4; i++)
 	{
 		str[i] = buff[idx++];
 	}
+
 	//on decimal point
 	disp7s_decimalpoint_on(&str[1]);
 	disp7s_decimalpoint_on(&str[2]);
@@ -255,7 +257,7 @@ void p1(void)
 					if (fryer.basket[i].blink.bf.toggle == BLINK_TOGGLE_SET_BLANK)
 					{
 						//strcpy(str,"     ");
-						disp7s_blank_displays(str,0,BASKET_DISP_MAX_CHARS_PERBASKET);
+						disp7s_blank_displays(str, 0, BASKET_DISP_MAX_CHARS_PERBASKET);
 
 					}
 					else
@@ -413,8 +415,9 @@ void p3(void)
 				}
 				else//BLINK_TOGGLE_SET_TEXT
 				{
-//TERMINAR CON DONE!!!
 //					strcpy(str,"DONE ");
+					strncpy(str,DIPS7S_MSG_donE,BASKET_DISP_MAX_CHARS_PERBASKET);
+
 				}
 				//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
 				//lcdan_print_string(str);

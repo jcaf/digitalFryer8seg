@@ -13,6 +13,7 @@
 extern const unsigned char DISP7_NUMERIC_ARR[10];
 extern const unsigned char DIPS7S_MSG_OFF[4];
 extern const unsigned char DIPS7S_MSG_PRECALENTAMIENTO[4];
+extern const unsigned char DIPS7S_MSG_donE[4];
 /* Numerical 0 to 9 */
 //0x3F,//    0b0011 1111,//0
 #define D7S_DATA_0 ((0<<D7S_DP)|(0<<D7S_G)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
@@ -45,6 +46,9 @@ extern const unsigned char DIPS7S_MSG_PRECALENTAMIENTO[4];
 #define D7S_DATA_E ((0<<D7S_DP)|(1<<D7S_G)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(1<<D7S_A))
 //r
 #define D7S_DATA_r ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(0<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
+//d
+#define D7S_DATA_d ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(0<<D7S_A))
+
 //o
 #define D7S_DATA_o ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
 //O
@@ -92,7 +96,7 @@ void disp7s_clear_all(void);
 void integer_to_arraybcd_msb_lsb_paddingleft_blank(int value, unsigned char *arraybcd, int8_t num_digits);
 void disp7s_decimalpoint_on(unsigned char *dig);
 void disp7s_decimalpoint_off(unsigned char *dig);
-
+void integer_to_arraybcd_msb_lsb_paddingleft_zeroes(int value, unsigned char *arraybcd, int8_t num_digits);
 
 #endif /* DISP7S_APPLEVEL_H_ */
 

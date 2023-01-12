@@ -105,7 +105,7 @@ struct _basket
 		struct _cookCycle
 		{
 				struct _t time;
-				int8_t counterTicks;
+				int16_t counterTicks;
 
 				struct _bf_cookCycle
 				{

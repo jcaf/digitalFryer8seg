@@ -12,7 +12,10 @@ Reglas:
     #define KB_NUM_KEYS 7  //Total Number of keys
 
 	//
-    #define KB_PERIODIC_ACCESS 1//20//msE-3		//aplication-level
+/* deberia de definirse todo a traves del mainflag*/
+
+    #define KB_PERIODIC_ACCESS 20//msE-3		//aplication-level cada x ms se llama a job()
+
     //#define KB_KEY_SCAN_COUNT_DEBOUNCE 1	//ajustar de acuerdo a la cantidad necesaria de delay-> ahora es calculado automaticamente
 	//
 	#define KB_KEY_SCAN_DEBOUNCE_MIN 20//ms 	//added 2020
