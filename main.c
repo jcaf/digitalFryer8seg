@@ -538,7 +538,7 @@ while (1)
 								fryer.basket[i].kbmode = KBMODE_DEFAULT;
 							}
 							//added
-							lcdanBuff_dump2device(lcdanBuff);
+//							lcdanBuff_dump2device(lcdanBuff);
 						}
 
 					}
@@ -572,7 +572,7 @@ while (1)
 								fryer.basket[i].kbmode = KBMODE_DEFAULT;
 							}
 							//added
-							lcdanBuff_dump2device(lcdanBuff);
+//							lcdanBuff_dump2device(lcdanBuff);
 						}
 					}
 				}

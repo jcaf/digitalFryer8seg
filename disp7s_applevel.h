@@ -14,6 +14,8 @@ extern const unsigned char DISP7_NUMERIC_ARR[10];
 extern const unsigned char DIPS7S_MSG_OFF[4];
 extern const unsigned char DIPS7S_MSG_PRECALENTAMIENTO[4];
 extern const unsigned char DIPS7S_MSG_donE[4];
+extern const unsigned char DIPS7S_MSG_OIL[4];
+extern const unsigned char DIPS7S_MSG_SET[4];
 /* Numerical 0 to 9 */
 //0x3F,//    0b0011 1111,//0
 #define D7S_DATA_0 ((0<<D7S_DP)|(0<<D7S_G)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(1<<D7S_B)|(1<<D7S_A))
@@ -53,6 +55,13 @@ extern const unsigned char DIPS7S_MSG_donE[4];
 #define D7S_DATA_o ((0<<D7S_DP)|(1<<D7S_G)|(0<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(1<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
 //O
 #define D7S_DATA_O D7S_DATA_0
+//I
+#define D7S_DATA_I D7S_DATA_1
+//L
+#define D7S_DATA_L ((0<<D7S_DP)|(0<<D7S_G)|(1<<D7S_F)|(1<<D7S_E)|(1<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(0<<D7S_A))
+//S
+#define D7S_DATA_S D7S_DATA_5
+
 //F
 #define D7S_DATA_F ((0<<D7S_DP)|(1<<D7S_G)|(1<<D7S_F)|(1<<D7S_E)|(0<<D7S_D)|(0<<D7S_C)|(0<<D7S_B)|(1<<D7S_A))
 //P

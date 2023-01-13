@@ -39,6 +39,21 @@ const unsigned char DIPS7S_MSG_donE[4] =
 		D7S_DATA_E
 };
 
+const unsigned char DIPS7S_MSG_OIL[4] =
+{
+		D7S_DATA_O,
+		D7S_DATA_I,
+		DISP7Sinvfix(D7S_DATA_L),
+		D7S_DATA_BLANK
+};
+
+const unsigned char DIPS7S_MSG_SET[4] =
+{
+		D7S_DATA_S,
+		D7S_DATA_E,
+		DISP7Sinvfix(D7S_DATA_t),
+		D7S_DATA_BLANK
+};
 const unsigned char DIPS7S_MSG_PRECALENTAMIENTO[4] =
 {
 		D7S_DATA_P,

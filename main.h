@@ -11,8 +11,8 @@
 #include <stdint.h>
 #include "types.h"
 #include "system.h"
-#include "lcdan/lcdan.h"
-#include "lcdan/lcdan_aux.h"
+//#include "lcdan/lcdan.h"
+//#include "lcdan/lcdan_aux.h"
 #include "ikb/ikb.h"
 #include "timing/timing.h"
 #include "utils/utils.h"

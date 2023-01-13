@@ -74,7 +74,7 @@ void cookCycle_hotUpdate(struct _t *TcookCycle_setPoint_toUpdate, struct _t *Tco
 
 struct _basket basket_temp[BASKET_MAXSIZE];//basket temp mantiene en todo el programa el valor guardado en la EEPROM desde q arranca la aplicacion
 
-char lcdanBuff[LCDAN_ROW][LCDAN_COL];
+//char lcdanBuff[LCDAN_ROW][LCDAN_COL];
 
 void psmode_operative_init(void)
 {
