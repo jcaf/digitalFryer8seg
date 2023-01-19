@@ -12,20 +12,7 @@
 
 #define PSMODE_OPERATIVE_BLINK_TIMER_KMAX (400/SYSTICK_MS)			//Xms/10ms de acceso
 #define PSMODE_OPERATIVE_EDITCYCLE_TIMERTIMEOUT_K (3000/SYSTICK_MS)	//5000ms/10ms
-/*
-//build to print Left time mm:ss
-void build_cookCycle_string(struct _t *t, char *str)
-{
-	char buff[20];
-	itoa(t->min, buff, 10);
-	paddingLeftwBlanks(buff, 2);
-	strcpy(str, buff);
-	strcat(str, ":");
-	itoa(t->sec, buff, 10);
-	paddingLeftwZeroes(buff, 2);
-	strcat(str, buff);
-}
-*/
+
 //build to print Left time mm:ss
 void build_cookCycle_string(struct _t *t, unsigned char *str)
 {
@@ -103,15 +90,9 @@ void psmode_operative_init(void)
 		{
 			build_cookCycle_string(&fryer.basket[i].cookCycle.time, str);
 
-			//lcdan_clear();
-			//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
-			//lcdan_print_string(str);
-
-			//lcdanBuff_clear(lcdanBuff);
-			//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-			//lcdanBuff_dump2device(lcdanBuff);
 
 			disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
+
 		}
 
 		//
@@ -163,7 +144,9 @@ void p1(void)
 			//
 			fryer.basket[i].display.bf.print_cookCycle = 0;
 			//fryer.basket[i].bf.user_startStop = FRYER_COOKCYCLE_USER_STOPPED;
+
 			fryer.basket[i].cookCycle.editcycle.bf.blinkIsActive = 1;
+
 			fryer.basket[i].kbmode = KBMODE_EDIT_COOKCYCLE;
 			fryer.basket[i].display.owner = DISPLAY_EDITCOOKCYCLE;
 			fryer.basket[i].cookCycle.editcycle.timerTimeout = 0x0000;//reset
@@ -215,10 +198,7 @@ void p1(void)
 					if ((fryer.basket[i].display.bf.print_cookCycle == 1) && (fryer.viewmode == FRYER_VIEWMODE_COOK))
 					{
 						build_cookCycle_string(&fryer.basket[i].cookCycle.time, str);
-						//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
-						//lcdan_print_string(str);
-						//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-						//lcdanBuff_dump2device(lcdanBuff);
+
 						disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 					}
 				}
@@ -256,19 +236,16 @@ void p1(void)
 				{
 					if (fryer.basket[i].blink.bf.toggle == BLINK_TOGGLE_SET_BLANK)
 					{
-						//strcpy(str,"     ");
 						disp7s_blank_displays(str, 0, BASKET_DISP_MAX_CHARS_PERBASKET);
-
+						disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 					}
 					else
 					{
 						build_cookCycle_string(&basket_temp[i].cookCycle.time, str);
+						disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 					}
-					//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
-					//lcdan_print_string(str);
-					//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-					//lcdanBuff_dump2device(lcdanBuff);
-					disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
+
+//					disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 				}
 				//
 			}
@@ -316,6 +293,7 @@ void p1(void)
 
 
 			fryer.basket[i].cookCycle.editcycle.bf.blinkIsActive = 0;
+
 			//return to visualizing decrement-timing
 			fryer.basket[i].cookCycle.counterTicks = 0x00;//reset counter
 			fryer.basket[i].cookCycle.bf.forceCheckControl = 1;//forzar pase directo para poder visualizar y actuar si es 00:00
@@ -397,10 +375,7 @@ void p3(void)
 			if (fryer.basket[i].display.bf.print_cookCycle == 1)
 			{
 				build_cookCycle_string(&fryer.basket[i].cookCycle.time, str);
-				//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
-				//lcdan_print_string(str);
-				//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-				//lcdanBuff_dump2device(lcdanBuff);
+
 				disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 				//
 				fryer.basket[i].display.bf.print_cookCycle = 0;
@@ -410,20 +385,17 @@ void p3(void)
 			{
 				if (fryer.basket[i].blink.bf.toggle == BLINK_TOGGLE_SET_BLANK)
 				{
-					//strcpy(str,"     ");
 					disp7s_blank_displays(str,0,BASKET_DISP_MAX_CHARS_PERBASKET);
+					disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 				}
 				else//BLINK_TOGGLE_SET_TEXT
 				{
-//					strcpy(str,"DONE ");
-					strncpy(str,DIPS7S_MSG_donE,BASKET_DISP_MAX_CHARS_PERBASKET);
 
+					strncpy(str,DIPS7S_MSG_donE,BASKET_DISP_MAX_CHARS_PERBASKET);
+					disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 				}
-				//lcdan_set_cursor(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y);
-				//lcdan_print_string(str);
-				//lcdanBuff_print_string(fryer.basket[i].display.cursor.x, fryer.basket[i].display.cursor.y,lcdanBuff,str);
-				//lcdanBuff_dump2device(lcdanBuff);
-				disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
+
+				//disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 			}
 		}
 
@@ -436,6 +408,7 @@ void psmode_operative(void)
 {
 	if (fryer.ps_operative.sm0 == 0)
 	{
+		//return;
 		psmode_operative_init();
 		fryer.ps_operative.sm0++;
 	}

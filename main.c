@@ -196,7 +196,16 @@ void fryer_init(void)
 	//--++
 }
 
+void repairtrack(void)
+{
 
+	DDRC = 0xFF;
+	PORTC = DISP7Sinvfix(D7S_DATA_t);
+	PinTo1(PORTWxDISPLAY7S_Q6, PINxDISPLAY7S_Q6);
+	while (1);
+
+
+}
 
 int main(void)
 {
@@ -252,12 +261,6 @@ int main(void)
 
 
 int8_t systick_counter0=0;
-
-//DDRC = 0xFF;
-//PORTC = DISP7Sinvfix(D7S_DATA_t);
-//PinTo1(PORTWxDISPLAY7S_Q6, PINxDISPLAY7S_Q6);
-//while (1);
-
 /*
 fryer.basket[0].cookCycle.time.min=7;
 fryer.basket[0].cookCycle.time.sec=38;
@@ -331,7 +334,7 @@ while (1)
 */
 
 ///////////////////////////////////////
-
+int tt=0;
 	while (1)
 	{
 		if (isr_flag.sysTickMs)
@@ -373,9 +376,14 @@ while (1)
 				if (++c == (20/SYSTICK_MS))    //20ms
 				{
 					c = 0;
+
+
+					if (tt == 0)
+					{
 					//
 					pinGetLevel_job();
 					//---------------------------
+
 					if (pinGetLevel_hasChanged(PGLEVEL_LYOUT_SWONOFF))
 					{
 						pinGetLevel_clearChange(PGLEVEL_LYOUT_SWONOFF);
@@ -393,6 +401,8 @@ while (1)
 							int16_t error = mypid0_adjust_kei_windup(); /* dejar preparado para job()*/
 							pid_find_ktop_ms(&mypid0, error);
 							pid_pwm_stablish_levelpin(&mypid0);//set PWM por primera vez//tener de inmediato el valor de ktop_ms
+
+
 						}
 						else
 						{
@@ -408,7 +418,8 @@ while (1)
 						// en ambos casos, iniciar desde el principio
 						//sm0 = 0x00;	//bug deberia de estar solo para cuando entra a OFF
 						//fryer_init();
-
+						tt = 1;
+					}
 					}
 					//chispero();
 					ikb_job();
@@ -419,7 +430,7 @@ while (1)
 			//
 			if (pinGetLevel_level(PGLEVEL_LYOUT_SWONOFF)== 0)
 			{
-				if (sm0 == 1)
+				if (sm0 == 2)
 				{
 					kbmode_2basket_set_default();
 
@@ -431,11 +442,9 @@ while (1)
 					//
 
 					//igDeteccFlama_resetJob();
-
-//para poder testear la primera parte
 					sm0++;
 				}
-				else if (sm0 == 2)
+				else if (sm0 == 3)
 				{
 					if (1)//(igDeteccFlama_doJob())
 					{
@@ -443,42 +452,44 @@ while (1)
 									//PID_Control -> setpoint = Tprecalentamiento
 					}
 				}
-				else if (sm0 == 3)
+				else if (sm0 == 4)
 				{
 					//Precalentamiento
 					//if (TCtemperature >= mypid0.algo.sp)
 
 					if (fryer.viewmode == FRYER_VIEWMODE_PREHEATING)
 					{
-//PARA PODER ENTRAR DE FRENTE
+							//PARA PODER ENTRAR DE FRENTE
 
 //						if (TCtemperature >= tmprture_coccion.TC)
-						if (TCtemperature >= 0)
-
-						{
-							//
-							indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
-							indicator_On();
-							//
-							fryer.bf.preheating = 0;
-
-							fryer.viewmode = FRYER_VIEWMODE_COOK;
-							for (int i=0; i<BASKET_MAXSIZE; i++)//added
-							{
-								kbmode_default(&fryer.basket[i].kb);
-								fryer.basket[i].kbmode = KBMODE_DEFAULT;
-							}
-							fryer.bf.operative_mode = 1;
-							//
-
-							sm0++;
-						}
+//						if (TCtemperature >= 0)
+//
+//						{
+//							//
+////							indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
+////							indicator_On();
+////							//
+////							fryer.bf.preheating = 0;
+////
+////							fryer.viewmode = FRYER_VIEWMODE_COOK;
+//
+////
+////							for (int i=0; i<BASKET_MAXSIZE; i++)//added
+////							{
+////								kbmode_default(&fryer.basket[i].kb);
+////								fryer.basket[i].kbmode = KBMODE_DEFAULT;
+////							}
+////							fryer.bf.operative_mode = 1;
+////							//
+////
+////							sm0++;
+//						}
 					}
 				}
-				else if (sm0 == 4)
+				else if (sm0 == 5)
 				{
 				}
-
+/*
 				if ((fryer.viewmode == FRYER_VIEWMODE_PREHEATING) || (fryer.viewmode == FRYER_VIEWMODE_COOK))
 				{
 					if (ikb_key_is_ready2read(KB_LYOUT_PROGRAM))
@@ -526,7 +537,9 @@ while (1)
 								kbmode_default(&fryer.basket[i].kb);
 							}
 //							lcdan_print_PSTRstring(PSTR("MELT"));
+
 							disp7s_clear_all();
+
 							disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 						}
 						else
@@ -559,7 +572,9 @@ while (1)
 								kbmode_default(&fryer.basket[i].kb);
 							}
 //							lcdan_print_PSTRstring(PSTR("MELT"));
+
 							disp7s_clear_all();
+
 							disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 						}
 						else
@@ -577,9 +592,9 @@ while (1)
 					}
 				}
 
-				if (fryer.bf.operative_mode == 1)
+				*/if (fryer.bf.operative_mode == 1)
 				{
-					psmode_operative();
+					//psmode_operative();
 				}
 
 				// PID control

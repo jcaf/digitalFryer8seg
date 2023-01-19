@@ -118,10 +118,10 @@ void disp7s_fix_all_upsidedown_display(void)
 }
 void disp7s_blank_displays(unsigned char *data, int8_t initial_position, int8_t num_digits)
 {
-	int8_t idx = initial_position;
+	//int8_t idx = initial_position;
 	for (int i=0; i<num_digits; i++)
 	{
-		data[idx++] = D7S_DATA_BLANK;
+		data[initial_position++] = D7S_DATA_BLANK;
 	}
 }
 
