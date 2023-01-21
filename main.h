@@ -28,6 +28,29 @@ struct _mainflag
 		unsigned sysTickMs :1;
 		unsigned __a:7;
 };
+struct _main_schedule
+{
+		int8_t sm0;
+		struct _bf
+		{
+				unsigned switch_status_onoff:1;
+				unsigned startup_finish_stable_temperature:1;
+				unsigned startup_finish_read_switch_onoff:1;
+				unsigned sensor_status_thermocuple:1;
+				unsigned __a:4;
+		}bf;
+};
+enum STARTUP_STATUS{
+	STARTUP_UNFINISHED = 0,
+	STARTUP_FINISHED = 1,
+};
+
+enum SENSOR_STATUS{
+	SENSOR_STATUS_UNKNOWN = -1,
+	SENSOR_STATUS_BAD = 0,
+	SENSOR_STATUS_OK = 1,
+};
+
 extern struct _mainflag mainflag;
 
 //deprecar  estos 2 defines

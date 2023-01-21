@@ -60,7 +60,12 @@ volatile struct _isr_flag
 	unsigned sysTickMs :1;
 	unsigned __a :7;
 } isr_flag = { 0 };
+
 struct _mainflag mainflag;
+
+struct _main_schedule main_schedule;
+const struct _main_schedule main_schedule_reset;
+
 
 const struct _process ps_reset;
 struct _fryer fryer;
@@ -196,21 +201,11 @@ void fryer_init(void)
 	//--++
 }
 
-void repairtrack(void)
-{
-
-	DDRC = 0xFF;
-	PORTC = DISP7Sinvfix(D7S_DATA_t);
-	PinTo1(PORTWxDISPLAY7S_Q6, PINxDISPLAY7S_Q6);
-	while (1);
-
-
-}
 
 int main(void)
 {
-	int8_t sm0 = 0;
-	int c = 0;
+	int counter0 = 0;
+	int counter1 = 0;
 	unsigned char str[10];//cambiar a char_arr
 
 	disp7s_init();//new
@@ -260,7 +255,7 @@ int main(void)
 	mypid0_set();	//1 vez
 
 
-int8_t systick_counter0=0;
+	int8_t systick_counter0=0;
 /*
 fryer.basket[0].cookCycle.time.min=7;
 fryer.basket[0].cookCycle.time.sec=38;
@@ -334,7 +329,7 @@ while (1)
 */
 
 ///////////////////////////////////////
-int tt=0;
+
 	while (1)
 	{
 		if (isr_flag.sysTickMs)
@@ -352,272 +347,263 @@ int tt=0;
 			}
 		}
 
-		if (sm0 == 0)
+		if (temperature_job())
 		{
-			/* sm0 == 0, es un init para todos los procesos q necesitan de mainflag.sysTickMs al iniciar el sistema*/
-			if ( temperature_job() == 1)
+			main_schedule.bf.startup_finish_stable_temperature = STARTUP_FINISHED;
+
+			if (TCtemperature == MAX6675_THERMOCOUPLED_OPEN)
 			{
-				if (TCtemperature == MAX6675_THERMOCOUPLED_OPEN)
+				MAX6675_formatText3dig(TCtemperature, str);
+				disp7s_update_data_array(str, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
+
+				main_schedule.bf.sensor_status_thermocuple = SENSOR_STATUS_BAD;
+			}
+			else
+			{
+				main_schedule.bf.sensor_status_thermocuple = SENSOR_STATUS_OK;
+			}
+		}
+
+		//----------------------
+		if (mainflag.sysTickMs)
+		{
+			if (++counter0 == (20/SYSTICK_MS))    //20ms
+			{
+				counter0 = 0;
+
+				//
+				pinGetLevel_job();
+				//---------------------------
+
+				if (pinGetLevel_hasChanged(PGLEVEL_LYOUT_SWONOFF))
 				{
-					MAX6675_formatText3dig(TCtemperature, str);
-					disp7s_update_data_array(str, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
-				}
-				else
-				{
-					sm0++;
+					pinGetLevel_clearChange(PGLEVEL_LYOUT_SWONOFF);
+					//
+					main_schedule.bf.startup_finish_read_switch_onoff = STARTUP_FINISHED;
+
+					//
+					indicator_setKSysTickTime_ms(75/SYSTICK_MS);
+					indicator_On();
+					//
+					disp7s_clear_all();
+
+					if (pinGetLevel_level(PGLEVEL_LYOUT_SWONOFF)== 0)	//active in low
+					{
+						/* ON*/
+						/* forzar en sacar el nivel del PWM para el primer periodo, ya que T = 10s*/
+						int16_t error = mypid0_adjust_kei_windup(); /* dejar preparado para job()*/
+						pid_find_ktop_ms(&mypid0, error);
+						pid_pwm_stablish_levelpin(&mypid0);//set PWM por primera vez//tener de inmediato el valor de ktop_ms
+
+						//
+						main_schedule.bf.switch_status_onoff = 1;
+					}
+					else
+					{
+						main_schedule.bf.switch_status_onoff = 0;
+
+						disp7s_clear_all();
+						disp7s_update_data_array(DIPS7S_MSG_OFF, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
+						//
+						pid_pwm_set_pin(&mypid0, 0);
+						fryer_init();
+						main_schedule = main_schedule_reset;
+						//
+					}
 				}
 			}
 		}
-		else
+
+
+		if (main_schedule.bf.startup_finish_read_switch_onoff == STARTUP_FINISHED)
 		{
-			//----------------------
-			if (mainflag.sysTickMs)
+			if (main_schedule.bf.switch_status_onoff == 1)
 			{
-				if (++c == (20/SYSTICK_MS))    //20ms
+				if ( (main_schedule.bf.startup_finish_stable_temperature == STARTUP_FINISHED) && (main_schedule.bf.sensor_status_thermocuple == SENSOR_STATUS_OK))
 				{
-					c = 0;
-
-
-					if (tt == 0)
+					//the machine can operate properly
+					if (main_schedule.sm0 == 0)
 					{
-					//
-					pinGetLevel_job();
-					//---------------------------
+						kbmode_2basket_set_default();
 
-					if (pinGetLevel_hasChanged(PGLEVEL_LYOUT_SWONOFF))
-					{
-						pinGetLevel_clearChange(PGLEVEL_LYOUT_SWONOFF);
-
+						//lcdan_print_PSTRstring(PSTR("MELT"));
+						disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 						//
-						indicator_setKSysTickTime_ms(75/SYSTICK_MS);
-						indicator_On();
+						fryer.bf.preheating = 1;
+						fryer.viewmode = FRYER_VIEWMODE_PREHEATING;
 						//
-						disp7s_clear_all();
 
-						if (pinGetLevel_level(PGLEVEL_LYOUT_SWONOFF)== 0)	//active in low
-						{
-							/* ON*/
-							/* forzar en sacar el nivel del PWM para el primer periodo, ya que T = 10s*/
-							int16_t error = mypid0_adjust_kei_windup(); /* dejar preparado para job()*/
-							pid_find_ktop_ms(&mypid0, error);
-							pid_pwm_stablish_levelpin(&mypid0);//set PWM por primera vez//tener de inmediato el valor de ktop_ms
-
-
-						}
-						else
-						{
-							/* OFF */
-							/* pin to 0*/
-							pid_pwm_set_pin(&mypid0, 0);
-							disp7s_update_data_array(DIPS7S_MSG_OFF, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
-
-							sm0 = 0x00;
-							fryer_init();
-
-						}
-						// en ambos casos, iniciar desde el principio
-						//sm0 = 0x00;	//bug deberia de estar solo para cuando entra a OFF
-						//fryer_init();
-						tt = 1;
+						//igDeteccFlama_resetJob();
+						main_schedule.sm0++;
 					}
+					else if (main_schedule.sm0 == 1)
+					{
+						if (1)//(igDeteccFlama_doJob())
+						{
+							main_schedule.sm0++;    	//OK...Ignicion+deteccion de flama OK
+														//PID_Control -> setpoint = Tprecalentamiento
+						}
 					}
-					//chispero();
-					ikb_job();
-				}
-			}
+					else if (main_schedule.sm0 == 2)
+					{
+						//Precalentamiento
+						if (fryer.viewmode == FRYER_VIEWMODE_PREHEATING)
+						{
+							//if (TCtemperature >= tmprture_coccion.TC)
+							if (TCtemperature >= 0)
+							{
+								//
+								indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
+								indicator_On();
+								//
+								fryer.bf.preheating = 0;
+
+								fryer.viewmode = FRYER_VIEWMODE_COOK;
 
 
-			//
-			if (pinGetLevel_level(PGLEVEL_LYOUT_SWONOFF)== 0)
-			{
-				if (sm0 == 2)
-				{
-					kbmode_2basket_set_default();
+								for (int i=0; i<BASKET_MAXSIZE; i++)//added
+								{
+									kbmode_default(&fryer.basket[i].kb);
+									fryer.basket[i].kbmode = KBMODE_DEFAULT;
+								}
+								fryer.bf.operative_mode = 1;
+								//
 
-					//lcdan_print_PSTRstring(PSTR("MELT"));
-					disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
+								main_schedule.sm0++;
+							}
+						}
+					}
+					else if (main_schedule.sm0 == 3)
+					{
+					}
+
+					if ((fryer.viewmode == FRYER_VIEWMODE_PREHEATING) || (fryer.viewmode == FRYER_VIEWMODE_COOK))
+					{
+						if (ikb_key_is_ready2read(KB_LYOUT_PROGRAM))
+						{
+							ikb_key_was_read(KB_LYOUT_PROGRAM);
+
+							if ( ikb_get_AtTimeExpired_BeforeOrAfter(KB_LYOUT_PROGRAM) == KB_AFTER_THR)
+							{
+								fryer.viewmode = FRYER_VIEWMODE_PROGRAM;
+								fryer.ps_program = ps_reset;
+
+								indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
+								indicator_On();
+
+								//Salir actualizando eeprom
+								for (int i=0; i<BASKET_MAXSIZE; i++)
+								{
+									eeprom_update_block( (struct _t *)(&basket_temp[i].cookCycle.time), (struct _t *)(&COOKTIME[i]), sizeof(struct _t));
+								}
+							}
+							//added 7 abr 2022
+							else//KB_BEFORE_THR
+							{
+								/// Visualizar la temperatura
+								fryer.viewmode = FRYER_VIEWMODE_VIEWCOOKTEMP;
+								fryer.ps_viewTemp = ps_reset;
+
+								indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
+								indicator_On();
+							}
+						}
+					}
 					//
-					fryer.bf.preheating = 1;
-					fryer.viewmode = FRYER_VIEWMODE_PREHEATING;
-					//
-
-					//igDeteccFlama_resetJob();
-					sm0++;
-				}
-				else if (sm0 == 3)
-				{
-					if (1)//(igDeteccFlama_doJob())
+					if (fryer.viewmode == FRYER_VIEWMODE_PROGRAM)
 					{
-						sm0++;    	//OK...Ignicion+deteccion de flama OK
-									//PID_Control -> setpoint = Tprecalentamiento
-					}
-				}
-				else if (sm0 == 4)
-				{
-					//Precalentamiento
-					//if (TCtemperature >= mypid0.algo.sp)
-
-					if (fryer.viewmode == FRYER_VIEWMODE_PREHEATING)
-					{
-							//PARA PODER ENTRAR DE FRENTE
-
-//						if (TCtemperature >= tmprture_coccion.TC)
-//						if (TCtemperature >= 0)
-//
-//						{
-//							//
-////							indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
-////							indicator_On();
-////							//
-////							fryer.bf.preheating = 0;
-////
-////							fryer.viewmode = FRYER_VIEWMODE_COOK;
-//
-////
-////							for (int i=0; i<BASKET_MAXSIZE; i++)//added
-////							{
-////								kbmode_default(&fryer.basket[i].kb);
-////								fryer.basket[i].kbmode = KBMODE_DEFAULT;
-////							}
-////							fryer.bf.operative_mode = 1;
-////							//
-////
-////							sm0++;
-//						}
-					}
-				}
-				else if (sm0 == 5)
-				{
-				}
-/*
-				if ((fryer.viewmode == FRYER_VIEWMODE_PREHEATING) || (fryer.viewmode == FRYER_VIEWMODE_COOK))
-				{
-					if (ikb_key_is_ready2read(KB_LYOUT_PROGRAM))
-					{
-						ikb_key_was_read(KB_LYOUT_PROGRAM);
-
-						if ( ikb_get_AtTimeExpired_BeforeOrAfter(KB_LYOUT_PROGRAM) == KB_AFTER_THR)
+						if (psmode_program() == 1)
 						{
-							fryer.viewmode = FRYER_VIEWMODE_PROGRAM;
-							fryer.ps_program = ps_reset;
-
-							indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
-							indicator_On();
-
-							//Salir actualizando eeprom
-							for (int i=0; i<BASKET_MAXSIZE; i++)
+							if (fryer.bf.preheating == 1)//sigue en precalentamiento ?
 							{
-								eeprom_update_block( (struct _t *)(&basket_temp[i].cookCycle.time), (struct _t *)(&COOKTIME[i]), sizeof(struct _t));
-							}
-						}
-						//added 7 abr 2022
-						else//KB_BEFORE_THR
-						{
-							/// Visualizar la temperatura
-							fryer.viewmode = FRYER_VIEWMODE_VIEWCOOKTEMP;
-							fryer.ps_viewTemp = ps_reset;
+								fryer.viewmode = FRYER_VIEWMODE_PREHEATING;
 
-							indicator_setKSysTickTime_ms(1000/SYSTICK_MS);
-							indicator_On();
+								//set kb
+								for (int i=0; i<BASKET_MAXSIZE; i++)
+								{
+									kbmode_default(&fryer.basket[i].kb);
+								}
+								//lcdan_print_PSTRstring(PSTR("MELT"));
+								disp7s_clear_all();
+								disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
+							}
+							else
+							{
+								fryer.viewmode = FRYER_VIEWMODE_COOK;
+								for (int i=0; i<BASKET_MAXSIZE; i++)//added
+								{
+									kbmode_default(&fryer.basket[i].kb);
+									fryer.basket[i].kbmode = KBMODE_DEFAULT;
+								}
+								//added
+								//lcdanBuff_dump2device(lcdanBuff);
+							}
+
 						}
 					}
-				}
-				//
-				if (fryer.viewmode == FRYER_VIEWMODE_PROGRAM)
-				{
-					if (psmode_program() == 1)
+
+					//added 7 ab 2022
+					if (fryer.viewmode == FRYER_VIEWMODE_VIEWCOOKTEMP)
 					{
-						if (fryer.bf.preheating == 1)//sigue en precalentamiento ?
+						if (psmode_viewTemp() == 1)
 						{
-							fryer.viewmode = FRYER_VIEWMODE_PREHEATING;
-
-							//set kb
-							for (int i=0; i<BASKET_MAXSIZE; i++)
+							if (fryer.bf.preheating == 1)	//sigue en precalentamiento
 							{
-								kbmode_default(&fryer.basket[i].kb);
+								fryer.viewmode = FRYER_VIEWMODE_PREHEATING;
+
+								//set kb
+								for (int i=0; i<BASKET_MAXSIZE; i++)
+								{
+									kbmode_default(&fryer.basket[i].kb);
+								}
+								//lcdan_print_PSTRstring(PSTR("MELT"));
+
+								disp7s_clear_all();
+
+								disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 							}
-//							lcdan_print_PSTRstring(PSTR("MELT"));
-
-							disp7s_clear_all();
-
-							disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
-						}
-						else
-						{
-							fryer.viewmode = FRYER_VIEWMODE_COOK;
-							for (int i=0; i<BASKET_MAXSIZE; i++)//added
+							else
 							{
-								kbmode_default(&fryer.basket[i].kb);
-								fryer.basket[i].kbmode = KBMODE_DEFAULT;
-							}
-							//added
-//							lcdanBuff_dump2device(lcdanBuff);
-						}
+								fryer.viewmode = FRYER_VIEWMODE_COOK;
 
+								for (int i=0; i<BASKET_MAXSIZE; i++)//added
+								{
+									kbmode_default(&fryer.basket[i].kb);
+									fryer.basket[i].kbmode = KBMODE_DEFAULT;
+								}
+								//added
+								//lcdanBuff_dump2device(lcdanBuff);
+							}
+						}
 					}
-				}
 
-				//added 7 ab 2022
-				if (fryer.viewmode == FRYER_VIEWMODE_VIEWCOOKTEMP)
-				{
-					if (psmode_viewTemp() == 1)
+					if (fryer.bf.operative_mode == 1)
 					{
-						if (fryer.bf.preheating == 1)	//sigue en precalentamiento
+						psmode_operative();
+					}
+
+					// PID control
+					int16_t error = mypid0_adjust_kei_windup();
+					pid_job(&mypid0, error);
+
+					if (mainflag.sysTickMs)
+					{
+						if (++counter1 == (20/SYSTICK_MS))
 						{
-							fryer.viewmode = FRYER_VIEWMODE_PREHEATING;
-
-							//set kb
-							for (int i=0; i<BASKET_MAXSIZE; i++)
-							{
-								kbmode_default(&fryer.basket[i].kb);
-							}
-//							lcdan_print_PSTRstring(PSTR("MELT"));
-
-							disp7s_clear_all();
-
-							disp7s_update_data_array(DIPS7S_MSG_PRECALENTAMIENTO, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
-						}
-						else
-						{
-							fryer.viewmode = FRYER_VIEWMODE_COOK;
-
-							for (int i=0; i<BASKET_MAXSIZE; i++)//added
-							{
-								kbmode_default(&fryer.basket[i].kb);
-								fryer.basket[i].kbmode = KBMODE_DEFAULT;
-							}
-							//added
-//							lcdanBuff_dump2device(lcdanBuff);
+							counter1 = 0;
+							//
+							ikb_job();
 						}
 					}
 				}
-
-				*/if (fryer.bf.operative_mode == 1)
-				{
-					//psmode_operative();
-				}
-
-				// PID control
-				int16_t error = mypid0_adjust_kei_windup();
-				pid_job(&mypid0, error);
-				//
 			}
-			else //switch OFF
-			{
-
-			}
-
-			/* actua sobre el buzzer */
-			//indicator_job(); //bug, no debe estar en este punto, sino, afuera...porque al hacer off, no tiene control de llear el indicator_job
-
-			temperature_job();
-
-		}//end sm0 == 0
+		}
 
 		indicator_job();
-
 		mainflag.sysTickMs = 0;
+
 	}//while end
+
 	return 0;
 }
 

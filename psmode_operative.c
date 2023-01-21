@@ -408,7 +408,6 @@ void psmode_operative(void)
 {
 	if (fryer.ps_operative.sm0 == 0)
 	{
-		//return;
 		psmode_operative_init();
 		fryer.ps_operative.sm0++;
 	}
