@@ -27,36 +27,15 @@ int8_t psmode_viewTemp(void)
 			ikb_setKeyProp(fryer.basket[i].kb.program ,key_prop);//
 		}
 		//lcdan_clear();
-
 		fryer.ps_viewTemp.sm0++;
 	}
 	else if (fryer.ps_viewTemp.sm0 == 1)
 	{
-//		lcdan_set_cursor(DISP_CURSOR_BASKETLEFT_START_X, 0);
-//		lcdan_print_string("OIL  ");
-
 		disp7s_update_data_array(DIPS7S_MSG_OIL, BASKETLEFT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
-
-		//
-		//lcdan_set_cursor(0x0E, 0);//PRINT SYMBOL DEGREE
-		//lcdan_write_data(0b11011111);//
-
-		if (pgrmode.bf.unitTemperature == FAHRENHEIT)
-		{
-			//lcdan_write_data('F');
-		}
-		else
-		{
-			//lcdan_write_data('C');
-		}
 		fryer.ps_viewTemp.sm0++;
 	}
 	else if (fryer.ps_viewTemp.sm0 == 2)
 	{
-//		MAX6675_formatText3dig(TCtemperature, str);
-//		lcdan_set_cursor(DISP_CURSOR_BASKETRIGHT_START_X, 0);
-//		lcdan_print_string(str);
-
 		MAX6675_formatText3dig(TCtemperature, str);
 		disp7s_update_data_array(str, BASKETRIGHT_DISP_CURSOR_START_X, BASKET_DISP_MAX_CHARS_PERBASKET);
 	}

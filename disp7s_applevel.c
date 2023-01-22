@@ -134,6 +134,15 @@ void disp7s_update_data_array(const unsigned char *data, int8_t initial_position
 	}
 }
 
+void disp7s_save_data_array(unsigned char *data_array_buffer, int8_t num_digits)
+{
+	for (int i = 0; i<num_digits ; i++ )
+	{
+		data_array_buffer[i] = disp7s_data_array[i];
+	}
+}
+
+
 void disp7s_clear_all(void)
 {
 	disp7s_blank_displays(disp7s_data_array,0,DISP7S_TOTAL_NUMMAX);

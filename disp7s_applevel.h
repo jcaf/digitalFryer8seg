@@ -106,6 +106,7 @@ void integer_to_arraybcd_msb_lsb_paddingleft_blank(int value, unsigned char *arr
 void disp7s_decimalpoint_on(unsigned char *dig);
 void disp7s_decimalpoint_off(unsigned char *dig);
 void integer_to_arraybcd_msb_lsb_paddingleft_zeroes(int value, unsigned char *arraybcd, int8_t num_digits);
+void disp7s_save_data_array(unsigned char *data_array_buffer, int8_t num_digits);
 
 #endif /* DISP7S_APPLEVEL_H_ */
 

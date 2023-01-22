@@ -13,6 +13,19 @@
 #define PSMODE_OPERATIVE_BLINK_TIMER_KMAX (400/SYSTICK_MS)			//Xms/10ms de acceso
 #define PSMODE_OPERATIVE_EDITCYCLE_TIMERTIMEOUT_K (3000/SYSTICK_MS)	//5000ms/10ms
 
+//Used only for this psmode_operative to can recover the
+//unsigned char disp7s_data_array_buffered[DISP7S_TOTAL_NUMMAX];
+//void disp7s_update_data_array_buffered(const unsigned char *data, int8_t initial_position, int8_t num_digits)
+//{
+//	for (int i = 0; i< num_digits; i++ )
+//	{
+//		disp7s_data_array_buffered[initial_position++] = data[i];
+//	}
+//}
+
+
+
+
 //build to print Left time mm:ss
 void build_cookCycle_string(struct _t *t, unsigned char *str)
 {
@@ -244,8 +257,6 @@ void p1(void)
 						build_cookCycle_string(&basket_temp[i].cookCycle.time, str);
 						disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 					}
-
-//					disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 				}
 				//
 			}
@@ -266,7 +277,6 @@ void p1(void)
 					{
 						cookCycle_hotUpdate(&basket_temp[i].cookCycle.time, &COOKTIME[i], &fryer.basket[i].cookCycle.time);
 						//return with fryer.basket[i].cookCycle.time UPDATED!
-
 					}
 					else
 					{
@@ -390,17 +400,11 @@ void p3(void)
 				}
 				else//BLINK_TOGGLE_SET_TEXT
 				{
-
 					strncpy(str,DIPS7S_MSG_donE,BASKET_DISP_MAX_CHARS_PERBASKET);
 					disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 				}
-
-				//disp7s_update_data_array(str, fryer.basket[i].display.cursor.x, BASKET_DISP_MAX_CHARS_PERBASKET);
 			}
 		}
-
-
-
 	}
 }
 
