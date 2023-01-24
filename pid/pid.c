@@ -63,7 +63,7 @@ void pid_job(struct PID *pid, int16_t error)
 pid_algorithm es adimensional
 Note: previamente kei_windup_max/min has to be setted
 
-Buscar a traves de Kp, que el la salida del PID
+Buscar a traves de Kp, que la salida del PID
 este entre el rango de "10...0", para cualquier proceso
 en donde >=10 es 100%, y 0=0%
 **********************************************/

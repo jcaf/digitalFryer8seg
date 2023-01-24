@@ -11,8 +11,6 @@
 #include <stdint.h>
 #include "types.h"
 #include "system.h"
-//#include "lcdan/lcdan.h"
-//#include "lcdan/lcdan_aux.h"
 #include "ikb/ikb.h"
 #include "timing/timing.h"
 #include "utils/utils.h"
@@ -255,8 +253,12 @@ extern struct _t EEMEM COOKTIME[BASKET_MAXSIZE];
 #define PORTWxSOL_GAS_QUEMADOR 		PORTB
 #define PORTRxSOL_GAS_QUEMADOR 		PINB
 #define CONFIGIOxSOL_GAS_QUEMADOR 	DDRB
-#define PINxKB_SOL_GAS_QUEMADOR		2
+#define PINxSOL_GAS_QUEMADOR		2
 
+#define PORTWxCONTROLLER_ONOFF 		PORTB
+#define PORTRxCONTROLLER_ONOFF 		PINB
+#define CONFIGIOxCONTROLLER_ONOFF 	DDRB
+#define PINxCONTROLLER_ONOFF		1
 
 #define PORTWxBUZZER 	PORTA
 #define PORTRxBUZZER 	PINA

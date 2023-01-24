@@ -106,7 +106,7 @@ void mypid0_set(void)
 	/* 10 es la salida deseada del controlador PID que representa
 	 * el valor maximo (mayor o igual a este siempre será acotado a 10)
 	 *
-	 * +50 es el la error SP-PV, a partir de esa diferencia queremos el controlador
+	 * +50 es el error SP-PV, a partir de esa diferencia queremos el controlador
 	 * empieza a regular entre 10..0 de manera proporcional
 	 *  */
 	mypid0.algo.kp = 10.0f / 50;
@@ -118,7 +118,7 @@ void mypid0_set(void)
 	mypid0.algo.kei_windup_max = 10;
 
 	mypid0.pwm.io.port = &PORTWxSOL_GAS_QUEMADOR;
-	mypid0.pwm.io.pin = PINxKB_SOL_GAS_QUEMADOR;
+	mypid0.pwm.io.pin = PINxSOL_GAS_QUEMADOR;
 	//
 	//mypid0.algo.sp = 300;
 }
@@ -232,8 +232,12 @@ int main(void)
 	pinGetLevel_init(); //with Changed=flag activated at initialization
 
 
-	PinTo0(PORTWxSOL_GAS_QUEMADOR, PINxKB_SOL_GAS_QUEMADOR);
-	ConfigOutputPin(CONFIGIOxSOL_GAS_QUEMADOR, PINxKB_SOL_GAS_QUEMADOR);
+	PinTo0(PORTWxSOL_GAS_QUEMADOR, PINxSOL_GAS_QUEMADOR);
+	ConfigOutputPin(CONFIGIOxSOL_GAS_QUEMADOR, PINxSOL_GAS_QUEMADOR);
+
+
+	PinTo0(PORTWxCONTROLLER_ONOFF, PINxCONTROLLER_ONOFF);
+	ConfigOutputPin(CONFIGIOxCONTROLLER_ONOFF, PINxCONTROLLER_ONOFF);
 
 	//
 	ConfigOutputPin(CONFIGIOxBUZZER, PINxBUZZER);
@@ -327,6 +331,7 @@ int main(void)
 
 						//
 						main_schedule.bf.switch_status_onoff = 1;
+						PinTo1(PORTWxCONTROLLER_ONOFF, PINxCONTROLLER_ONOFF);
 					}
 					else
 					{
@@ -338,6 +343,7 @@ int main(void)
 						fryer_init();
 						main_schedule = main_schedule_reset;
 						//
+						PinTo0(PORTWxCONTROLLER_ONOFF, PINxCONTROLLER_ONOFF);
 					}
 				}
 			}

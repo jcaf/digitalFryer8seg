@@ -9,13 +9,13 @@
 		int8_t sm0;
 		uint16_t counter_ticks_ms;
 		uint16_t kmax_ticks_ms;
-		int8_t k_systemdelay_ton_ms;
-		int8_t k_systemdelay_toff_ms;
+		int16_t k_systemdelay_ton_ms;
+		int16_t k_systemdelay_toff_ms;
 	};
 
 	struct DutyCycle
 	{
-		uint8_t counter_ms;
+		uint16_t counter_ms;
 		int16_t ktop_ms;
 		int16_t ktop_uploaded_ms; /* for next period*/
 	};
@@ -29,13 +29,13 @@
 			int16_t eprevio;	/* error previo */
 			int16_t ed;			/* error derivativo	*/
 			//
-			int8_t kei_windup_max;	/* max windup for error integral */
-			int8_t kei_windup_min;	/* min windup for error integral */
+			int16_t kei_windup_max;	/* max windup for error integral */
+			int16_t kei_windup_min;	/* min windup for error integral */
 			//
-			int8_t pid_out_max_ms;
-			int8_t pid_out_min_ms;
+			int16_t pid_out_max_ms;
+			int16_t pid_out_min_ms;
 			//
-			int8_t scaler_time_ms;
+			int16_t scaler_time_ms;
 		#else
 			float sp;			/* set point */
 			//
